@@ -67,3 +67,5 @@ const CreateLocalTracks = () => {
 export default CreateLocalTracks;
 
 // setEnabled method was deprecated
+
+// https://docs.agora.io/en/Interactive%20Broadcast/create_local_track_web_ng?platform=Web

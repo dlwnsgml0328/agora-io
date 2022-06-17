@@ -29,3 +29,5 @@ const JoinAndLeave = () => {
 };
 
 export default JoinAndLeave;
+
+// https://docs.agora.io/en/Interactive%20Broadcast/join_and_leave_web_ng?platform=Web

@@ -5,6 +5,7 @@ import CreateLocalTracks from './pages/CreateLocalTracks';
 import Home from './pages/home';
 import JoinAndLeave from './pages/JoinAndLeave';
 import NotFound from './pages/NotFound';
+import PublishAndSubscribe from './pages/PublishAndSubscribe';
 import GlobalStyle from './style/GlobalStyle';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/JoinAndLeave' element={<JoinAndLeave />} />
         <Route path='/CreateLocalTracks' element={<CreateLocalTracks />} />
+        <Route path='/PublishAndSubscribe' element={<PublishAndSubscribe />} />
 
         <Route path='*' element={<NotFound />} />
       </Routes>
