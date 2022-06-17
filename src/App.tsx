@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header';
+import CreateLocalTracks from './pages/CreateLocalTracks';
 import Home from './pages/home';
 import JoinAndLeave from './pages/JoinAndLeave';
 import NotFound from './pages/NotFound';
@@ -15,6 +16,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/JoinAndLeave' element={<JoinAndLeave />} />
+        <Route path='/CreateLocalTracks' element={<CreateLocalTracks />} />
 
         <Route path='*' element={<NotFound />} />
       </Routes>

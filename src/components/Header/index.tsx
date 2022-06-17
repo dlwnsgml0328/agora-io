@@ -11,6 +11,9 @@ const Header = () => {
         <li>
           <Link to='/JoinAndLeave'>Join And Leave</Link>
         </li>
+        <li>
+          <Link to='/CreateLocalTracks'>Create Local Tracks</Link>
+        </li>
       </ul>
     </S.Header>
   );
