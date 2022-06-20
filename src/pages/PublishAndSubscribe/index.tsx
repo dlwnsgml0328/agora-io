@@ -46,8 +46,11 @@ const PublishAndSubscribe = () => {
   const join = useCallback(async () => {
     client.on('user-published', handleUserPublished);
     client.on('user-unpublished', () => {
-      console.log('@ user-unpublished updated');
+      console.log('# user-unpublished updated');
     });
+    client.on('user-joined', () => console.log('# user joined'));
+    client.on('user-left', () => console.log('# user left'));
+    client.on('connection-state-change', () => console.log('# connection state changed'));
 
     await client
       .join(APP_ID, CHANNEL, TOKEN, '0328')
