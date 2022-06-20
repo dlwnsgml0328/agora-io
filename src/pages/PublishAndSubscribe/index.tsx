@@ -10,7 +10,7 @@ const PublishAndSubscribe = () => {
   const [cameraState, setCamerState] = useState(false);
   const [audioState, setAudioState] = useState(false);
 
-  const localContainer = useRef<any>(null);
+  const localContainer = useRef<HTMLDivElement>(null);
 
   const client = AgoraRTC.createClient({
     codec: 'vp8',
@@ -111,6 +111,8 @@ const PublishAndSubscribe = () => {
       cameraTrack?.stop();
       return setCamerState(false);
     }
+
+    if (!localContainer.current) return;
 
     cameraTrack?.play(localContainer.current);
     setCamerState(true);
