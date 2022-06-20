@@ -1,11 +1,16 @@
-import AgoraRTC, { IMicrophoneAudioTrack, ICameraVideoTrack } from 'agora-rtc-sdk-ng';
-import { useEffect, useState } from 'react';
+import AgoraRTC, { IMicrophoneAudioTrack, ILocalVideoTrack } from 'agora-rtc-sdk-ng';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { config } from '../../config';
 
 const PublishAndSubscribe = () => {
   const [auth, setAuth] = useState(false);
-  const [cameraTrack, setCameraTrack] = useState<ICameraVideoTrack>();
+  const [cameraTrack, setCameraTrack] = useState<ILocalVideoTrack>();
   const [microphoneTrack, setMicrophoneTrack] = useState<IMicrophoneAudioTrack>();
+
+  const [cameraState, setCamerState] = useState(false);
+  const [audioState, setAudioState] = useState(false);
+
+  const localContainer = useRef<any>(null);
 
   const client = AgoraRTC.createClient({
     codec: 'vp8',
@@ -23,25 +28,48 @@ const PublishAndSubscribe = () => {
   }, [microphoneTrack]);
 
   const join = async () => {
+    client.on('user-published', handleUserPublished);
+    client.on('user-unpublished', () => {
+      console.log('@ user-unpublished updated');
+    });
+
     await client
       .join(APP_ID, CHANNEL, TOKEN, '0328')
       .then((res) => console.log('@ join: ', res))
       .then(() => makeLocalTrack())
       .catch((err) => console.log('@ err in join: ', err));
+
+    await console.log('@ microphoneTrack, cameraTrack', microphoneTrack, cameraTrack);
+
+    if (microphoneTrack)
+      await client.publish(microphoneTrack).then(() => console.log('@ microphoneTrack publish'));
+
+    if (cameraTrack)
+      await client.publish(cameraTrack).then(() => console.log('@ cameraTrack publish'));
   };
 
-  const leave = async () => {
+  const leave = useCallback(async () => {
+    if (cameraTrack) {
+      cameraTrack.stop();
+      cameraTrack.close();
+    }
+
+    if (microphoneTrack) {
+      microphoneTrack.stop();
+      microphoneTrack.close();
+    }
+
     await client
       .leave()
       .then(() => setAuth(false))
       .then(() => console.log('@ leave'))
       .catch((err) => console.log('@ err in leave: ', err));
-  };
+  }, [cameraTrack, microphoneTrack, client]);
 
   const makeLocalTrack = async () => {
     console.log('@ call make local ');
     await AgoraRTC.createCameraVideoTrack()
-      .then((res: ICameraVideoTrack) => setCameraTrack(res))
+      .then((res: ILocalVideoTrack) => setCameraTrack(res))
       .then(() => console.log('@ setCameraTrack done'));
     await AgoraRTC.createMicrophoneAudioTrack()
       .then((res: IMicrophoneAudioTrack) => setMicrophoneTrack(res))
@@ -49,25 +77,54 @@ const PublishAndSubscribe = () => {
     await setAuth(true);
   };
 
-  const publishClient = async (params: ICameraVideoTrack | IMicrophoneAudioTrack) => {
+  //   const publishClient = async (params: ILocalVideoTrack | IMicrophoneAudioTrack) => {
+  //     await client
+  //       .publish(params)
+  //       .then((res) => console.log(`@ publish ${params}:`, res))
+  //       .catch((err) => console.log('@ error in publishClient:', err));
+  //   };
+
+  //   const unPublishClient = async (params: ILocalVideoTrack | IMicrophoneAudioTrack | null) => {
+  //     if (params)
+  //       await client
+  //         .unpublish(params)
+  //         .then((res) => console.log('@ unpublish', res))
+  //         .catch((err) => console.log('@ error in unPublishClient:', err));
+  //     else
+  //       await client
+  //         .unpublish()
+  //         .then((res) => console.log('@ unpublish', res))
+  //         .catch((err) => console.log('@ error in unPublishClient:', err));
+  //   };
+
+  const handleUserPublished = async (user: any, mediaType: any) => {
+    console.log('@ handleUserPublished');
+
     await client
-      .publish(params)
-      .then((res) => console.log(`@ publish ${params}:`, res))
-      .catch((err) => console.log('@ error in publishClient:', err));
+      .subscribe(user, mediaType)
+      .then((res) => console.log(`@ subscribe`, res))
+      .catch((err) => console.log(`@ error in subscribe`, err));
   };
 
-  const unPublishClient = async (params: ICameraVideoTrack | IMicrophoneAudioTrack | null) => {
-    if (params)
-      await client
-        .unpublish(params)
-        .then((res) => console.log('@ unpublish', res))
-        .catch((err) => console.log('@ error in unPublishClient:', err));
-    else
-      await client
-        .unpublish()
-        .then((res) => console.log('@ unpublish', res))
-        .catch((err) => console.log('@ error in unPublishClient:', err));
-  };
+  const cameraToggle = useCallback(() => {
+    if (cameraState) {
+      cameraTrack?.stop();
+      return setCamerState(false);
+    }
+
+    cameraTrack?.play(localContainer.current);
+    setCamerState(true);
+  }, [cameraState, cameraTrack]);
+
+  const audioToggle = useCallback(() => {
+    if (audioState) {
+      microphoneTrack?.stop();
+      return setAudioState(false);
+    }
+
+    microphoneTrack?.play();
+    setAudioState(true);
+  }, [audioState, microphoneTrack]);
 
   return (
     <div>
@@ -79,24 +136,13 @@ const PublishAndSubscribe = () => {
       {auth && cameraTrack && microphoneTrack && (
         <>
           <h3>Hello User!</h3>
-          <p>
-            <button onClick={() => publishClient(cameraTrack)}>publish video</button>
-            <button onClick={() => publishClient(microphoneTrack)}>publish audio</button>
-            <button
-              onClick={() => unPublishClient(cameraTrack)}
-              style={{ color: 'orange', background: '#fff', border: '0.5px solid #000' }}
-            >
-              unpublish video
-            </button>
-            <button
-              onClick={() => unPublishClient(microphoneTrack)}
-              style={{ color: 'orange', background: '#fff', border: '0.5px solid #000' }}
-            >
-              unpublish audio
-            </button>
-          </p>
+
+          <button onClick={cameraToggle}>{cameraState ? 'camera off' : 'camera on'}</button>
+          <button onClick={audioToggle}>{audioState ? 'audio off' : 'audio on'} </button>
         </>
       )}
+
+      <div ref={localContainer} className='video-player' style={{ width: 320, height: 240 }}></div>
     </div>
   );
 };
