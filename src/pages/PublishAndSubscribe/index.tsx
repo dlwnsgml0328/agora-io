@@ -1,11 +1,15 @@
-import AgoraRTC, { IMicrophoneAudioTrack, ILocalVideoTrack } from 'agora-rtc-sdk-ng';
+import AgoraRTC, {
+  ILocalVideoTrack,
+  ILocalAudioTrack,
+  IAgoraRTCRemoteUser,
+} from 'agora-rtc-sdk-ng';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { config } from '../../config';
 
 const PublishAndSubscribe = () => {
   const [auth, setAuth] = useState(false);
-  const [cameraTrack, setCameraTrack] = useState<ILocalVideoTrack>();
-  const [microphoneTrack, setMicrophoneTrack] = useState<IMicrophoneAudioTrack>();
+  const [localVideoTrack, setLocalVideoTrack] = useState<ILocalVideoTrack>();
+  const [localAudioTrack, setLocalAudioTrack] = useState<ILocalAudioTrack>();
 
   const [cameraState, setCamerState] = useState(false);
   const [audioState, setAudioState] = useState(false);
@@ -20,14 +24,26 @@ const PublishAndSubscribe = () => {
   const { APP_ID, CHANNEL, TOKEN } = config;
 
   useEffect(() => {
-    if (cameraTrack) console.log('@ cameraTrack updated', cameraTrack);
-  }, [cameraTrack]);
+    if (localVideoTrack) console.log('@ localVideoTrack updated', localVideoTrack);
+  }, [localVideoTrack]);
 
   useEffect(() => {
-    if (microphoneTrack) console.log('@ microphoneTrack updated', microphoneTrack);
-  }, [microphoneTrack]);
+    if (localAudioTrack) console.log('@ localAudioTrack updated', localAudioTrack);
+  }, [localAudioTrack]);
 
-  const join = async () => {
+  const handleUserPublished = useCallback(
+    async (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
+      console.log('@ handleUserPublished');
+
+      await client
+        .subscribe(user, mediaType)
+        .then((res) => console.log(`@ subscribe`, res))
+        .catch((err) => console.log(`@ error in subscribe`, err));
+    },
+    [client]
+  );
+
+  const join = useCallback(async () => {
     client.on('user-published', handleUserPublished);
     client.on('user-unpublished', () => {
       console.log('@ user-unpublished updated');
@@ -38,25 +54,17 @@ const PublishAndSubscribe = () => {
       .then((res) => console.log('@ join: ', res))
       .then(() => makeLocalTrack())
       .catch((err) => console.log('@ err in join: ', err));
-
-    await console.log('@ microphoneTrack, cameraTrack', microphoneTrack, cameraTrack);
-
-    if (microphoneTrack)
-      await client.publish(microphoneTrack).then(() => console.log('@ microphoneTrack publish'));
-
-    if (cameraTrack)
-      await client.publish(cameraTrack).then(() => console.log('@ cameraTrack publish'));
-  };
+  }, [APP_ID, CHANNEL, TOKEN, client, handleUserPublished]);
 
   const leave = useCallback(async () => {
-    if (cameraTrack) {
-      cameraTrack.stop();
-      cameraTrack.close();
+    if (localVideoTrack) {
+      localVideoTrack.stop();
+      localVideoTrack.close();
     }
 
-    if (microphoneTrack) {
-      microphoneTrack.stop();
-      microphoneTrack.close();
+    if (localAudioTrack) {
+      localAudioTrack.stop();
+      localAudioTrack.close();
     }
 
     await client
@@ -64,69 +72,40 @@ const PublishAndSubscribe = () => {
       .then(() => setAuth(false))
       .then(() => console.log('@ leave'))
       .catch((err) => console.log('@ err in leave: ', err));
-  }, [cameraTrack, microphoneTrack, client]);
+  }, [localVideoTrack, localAudioTrack, client]);
 
   const makeLocalTrack = async () => {
     console.log('@ call make local ');
     await AgoraRTC.createCameraVideoTrack()
-      .then((res: ILocalVideoTrack) => setCameraTrack(res))
-      .then(() => console.log('@ setCameraTrack done'));
+      .then((res: ILocalVideoTrack) => setLocalVideoTrack(res))
+      .then(() => console.log('@ setLocalVideoTrack done'));
     await AgoraRTC.createMicrophoneAudioTrack()
-      .then((res: IMicrophoneAudioTrack) => setMicrophoneTrack(res))
-      .then(() => console.log('@ setMicrophoneTrack done'));
+      .then((res: ILocalAudioTrack) => setLocalAudioTrack(res))
+      .then(() => console.log('@ setLocalAudioTrack done'));
     await setAuth(true);
   };
 
-  //   const publishClient = async (params: ILocalVideoTrack | IMicrophoneAudioTrack) => {
-  //     await client
-  //       .publish(params)
-  //       .then((res) => console.log(`@ publish ${params}:`, res))
-  //       .catch((err) => console.log('@ error in publishClient:', err));
-  //   };
-
-  //   const unPublishClient = async (params: ILocalVideoTrack | IMicrophoneAudioTrack | null) => {
-  //     if (params)
-  //       await client
-  //         .unpublish(params)
-  //         .then((res) => console.log('@ unpublish', res))
-  //         .catch((err) => console.log('@ error in unPublishClient:', err));
-  //     else
-  //       await client
-  //         .unpublish()
-  //         .then((res) => console.log('@ unpublish', res))
-  //         .catch((err) => console.log('@ error in unPublishClient:', err));
-  //   };
-
-  const handleUserPublished = async (user: any, mediaType: any) => {
-    console.log('@ handleUserPublished');
-
-    await client
-      .subscribe(user, mediaType)
-      .then((res) => console.log(`@ subscribe`, res))
-      .catch((err) => console.log(`@ error in subscribe`, err));
-  };
-
-  const cameraToggle = useCallback(() => {
+  const cameraToggle = useCallback(async () => {
     if (cameraState) {
-      cameraTrack?.stop();
+      localVideoTrack?.stop();
       return setCamerState(false);
     }
 
     if (!localContainer.current) return;
 
-    cameraTrack?.play(localContainer.current);
+    localVideoTrack?.play(localContainer.current);
     setCamerState(true);
-  }, [cameraState, cameraTrack]);
+  }, [localVideoTrack, cameraState]);
 
-  const audioToggle = useCallback(() => {
+  const audioToggle = useCallback(async () => {
     if (audioState) {
-      microphoneTrack?.stop();
+      localAudioTrack?.stop();
       return setAudioState(false);
     }
 
-    microphoneTrack?.play();
+    localAudioTrack?.play();
     setAudioState(true);
-  }, [audioState, microphoneTrack]);
+  }, [audioState, localAudioTrack]);
 
   return (
     <div>
@@ -135,7 +114,7 @@ const PublishAndSubscribe = () => {
       <button onClick={join}>join</button>
       <button onClick={leave}>leave</button>
 
-      {auth && cameraTrack && microphoneTrack && (
+      {auth && localVideoTrack && localAudioTrack && (
         <>
           <h3>Hello User!</h3>
 
