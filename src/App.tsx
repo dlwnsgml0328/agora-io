@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header';
+import AdjustVolume from './pages/AdjustVolume';
 import CreateLocalTracks from './pages/CreateLocalTracks';
 import Home from './pages/home';
 import JoinAndLeave from './pages/JoinAndLeave';
@@ -19,6 +20,7 @@ function App() {
         <Route path='/JoinAndLeave' element={<JoinAndLeave />} />
         <Route path='/CreateLocalTracks' element={<CreateLocalTracks />} />
         <Route path='/PublishAndSubscribe' element={<PublishAndSubscribe />} />
+        <Route path='/AdjustVolume' element={<AdjustVolume />} />
 
         <Route path='*' element={<NotFound />} />
       </Routes>

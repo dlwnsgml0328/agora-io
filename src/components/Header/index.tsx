@@ -17,6 +17,9 @@ const Header = () => {
         <li>
           <Link to='/PublishAndSubscribe'>Publish And Subscribe</Link>
         </li>
+        <li>
+          <Link to='/AdjustVolume'>Adjust Volume</Link>
+        </li>
       </ul>
     </S.Header>
   );
