@@ -12,8 +12,7 @@ const CreateRemoteTracksV2 = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { APP_ID, CHANNEL, TOKEN } = config;
-  const { localAudioTrack, localVideoTrack, leave, join, joinState, remoteUsers } =
-    useAgora(client);
+  const { localVideoTrack, leave, join, joinState, remoteUsers } = useAgora(client);
 
   useEffect(() => {
     console.log('@ localVideoTrack', localVideoTrack);
@@ -75,7 +74,7 @@ const CreateRemoteTracksV2 = () => {
             {localVideoTrack && `localVideoTrack`}
             {joinState && localVideoTrack ? `(${client.uid})` : '?'}
           </p>
-          <MediaPlayer videoTrack={localVideoTrack} audioTrack={localAudioTrack}></MediaPlayer>
+          <MediaPlayer videoTrack={localVideoTrack} audioTrack={undefined}></MediaPlayer>
 
           {remoteUsers.map((user) => (
             <div className='remote-player-wrapper' key={user.uid}>

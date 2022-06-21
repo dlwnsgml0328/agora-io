@@ -4,7 +4,7 @@ import {
   ILocalAudioTrack,
   IRemoteAudioTrack,
 } from 'agora-rtc-sdk-ng';
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 
 export interface VideoPlayerProps {
   videoTrack: ILocalVideoTrack | IRemoteVideoTrack | undefined;
@@ -51,16 +51,16 @@ const MediaPlayer = (props: VideoPlayerProps) => {
     setLocalState({ ...localState, videoOn: true });
   }, [localState, props.videoTrack]);
 
-  // audio 버튼
-  const audioToggle = useCallback(async () => {
-    if (localState.audioOn) {
-      props.audioTrack?.stop();
-      return setLocalState({ ...localState, audioOn: false });
-    }
+  // // audio 버튼
+  // const audioToggle = useCallback(async () => {
+  //   if (localState.audioOn) {
+  //     props.audioTrack?.stop();
+  //     return setLocalState({ ...localState, audioOn: false });
+  //   }
 
-    props.audioTrack?.play();
-    setLocalState({ ...localState, audioOn: true });
-  }, [localState, props.audioTrack]);
+  //   props.audioTrack?.play();
+  //   setLocalState({ ...localState, audioOn: true });
+  // }, [localState, props.audioTrack]);
 
   return (
     <>
@@ -72,9 +72,9 @@ const MediaPlayer = (props: VideoPlayerProps) => {
       <button type='button' onClick={cameraToggle}>
         {localState.videoOn ? 'video off' : 'video on'}
       </button>
-      <button type='button' onClick={audioToggle}>
+      {/* <button type='button' onClick={audioToggle}>
         {localState.audioOn ? 'audio off' : 'audio on'}
-      </button>
+      </button> */}
     </>
   );
 };

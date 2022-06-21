@@ -56,6 +56,9 @@ const useAgora = (
       .then(() => console.log('@ publish success'))
       .catch((err) => console.log('@client publish error', err));
 
+    (window as any).client = client;
+    (window as any).videoTrack = cameraTrack;
+
     setJoinState(true);
   };
 
