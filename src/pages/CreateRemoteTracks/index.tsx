@@ -1,10 +1,15 @@
-import AgoraRTC, { ILocalAudioTrack, ILocalVideoTrack } from 'agora-rtc-sdk-ng';
+import AgoraRTC, {
+  IAgoraRTCRemoteUser,
+  ILocalAudioTrack,
+  ILocalVideoTrack,
+} from 'agora-rtc-sdk-ng';
 import { useState } from 'react';
 import Communication from '../../components/Communication';
 import Login from '../../components/Login';
 
 const CreateRemoteTracks = () => {
   const [auth, setAuth] = useState(false);
+  const [remoteUsers, setRemoteUsers] = useState<IAgoraRTCRemoteUser | undefined>();
 
   const [localVideoTrack, setLocalVideoTrack] = useState<ILocalVideoTrack>();
   const [localAudioTrack, setLocalAudioTrack] = useState<ILocalAudioTrack>();
@@ -24,11 +29,14 @@ const CreateRemoteTracks = () => {
           setAuth={setAuth}
           setLocalVideoTrack={setLocalVideoTrack}
           setLocalAudioTrack={setLocalAudioTrack}
+          remoteUsers={remoteUsers}
+          setRemoteUsers={setRemoteUsers}
         />
       ) : (
         <Communication
           AgoraRTC={AgoraRTC}
           client={client}
+          setAuth={setAuth}
           localVideoTrack={localVideoTrack}
           localAudioTrack={localAudioTrack}
           setLocalVideoTrack={setLocalVideoTrack}

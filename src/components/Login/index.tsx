@@ -1,4 +1,9 @@
-import AgoraRTC, { IAgoraRTCClient, ILocalAudioTrack, ILocalVideoTrack } from 'agora-rtc-sdk-ng';
+import AgoraRTC, {
+  IAgoraRTCClient,
+  IAgoraRTCRemoteUser,
+  ILocalAudioTrack,
+  ILocalVideoTrack,
+} from 'agora-rtc-sdk-ng';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { config } from '../../config';
 import * as S from './index.styles';
@@ -8,9 +13,18 @@ interface IProps {
   setAuth: React.Dispatch<React.SetStateAction<boolean>>;
   setLocalVideoTrack: React.Dispatch<React.SetStateAction<ILocalVideoTrack | undefined>>;
   setLocalAudioTrack: React.Dispatch<React.SetStateAction<ILocalAudioTrack | undefined>>;
+  remoteUsers: IAgoraRTCRemoteUser | undefined;
+  setRemoteUsers: React.Dispatch<React.SetStateAction<IAgoraRTCRemoteUser | undefined>>;
 }
 
-const Login = ({ client, setAuth, setLocalVideoTrack, setLocalAudioTrack }: IProps) => {
+const Login = ({
+  client,
+  setAuth,
+  setLocalVideoTrack,
+  setLocalAudioTrack,
+  remoteUsers,
+  setRemoteUsers,
+}: IProps) => {
   const [id, setId] = useState('');
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -34,8 +48,41 @@ const Login = ({ client, setAuth, setLocalVideoTrack, setLocalAudioTrack }: IPro
       .catch((err) => console.log('@ err in promise', err));
   }, [setAuth, setLocalVideoTrack, setLocalAudioTrack]);
 
+  const handleUserPublished = useCallback(
+    (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
+      console.log('@ handleUser published 🅾️');
+
+      const id = user.uid;
+      console.log('catch remoteUsers', remoteUsers);
+      let immsiUser: any = { ...remoteUsers };
+      immsiUser[id] = user;
+
+      console.log('catch remoteUsers', immsiUser);
+      setRemoteUsers(immsiUser);
+
+      client.subscribe(user, mediaType);
+    },
+    [client, remoteUsers, setRemoteUsers]
+  );
+
+  const handleUserUnpublished = useCallback(
+    (user: IAgoraRTCRemoteUser, mediaType: 'video' | 'audio') => {
+      console.log('@ handleUser UnPublished ❌');
+      if (mediaType === 'video') {
+        const id = user.uid;
+
+        let immsiUser: any = { ...remoteUsers };
+        delete immsiUser[id];
+      }
+    },
+    [remoteUsers]
+  );
+
   const join = useCallback(
     async (id: string) => {
+      client.on('user-published', handleUserPublished);
+      client.on('user-unpublished', handleUserUnpublished);
+
       await client
         .join(APP_ID, CHANNEL, TOKEN, id)
         .then((res) => {
@@ -47,7 +94,7 @@ const Login = ({ client, setAuth, setLocalVideoTrack, setLocalAudioTrack }: IPro
         });
     },
 
-    [client, APP_ID, CHANNEL, TOKEN, makeLocal]
+    [client, APP_ID, CHANNEL, TOKEN, makeLocal, handleUserPublished, handleUserUnpublished]
   );
 
   const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

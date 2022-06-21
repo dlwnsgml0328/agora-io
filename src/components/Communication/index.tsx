@@ -5,6 +5,7 @@ import * as S from './index.styles';
 interface IProps {
   AgoraRTC: IAgoraRTC;
   client: IAgoraRTCClient;
+  setAuth: React.Dispatch<React.SetStateAction<boolean>>;
   localVideoTrack: ILocalVideoTrack | undefined;
   localAudioTrack: ILocalAudioTrack | undefined;
   setLocalVideoTrack: React.Dispatch<React.SetStateAction<ILocalVideoTrack | undefined>>;
@@ -14,6 +15,7 @@ interface IProps {
 const Communication = ({
   AgoraRTC,
   client,
+  setAuth,
   localVideoTrack,
   localAudioTrack,
   setLocalVideoTrack,
@@ -30,6 +32,13 @@ const Communication = ({
     console.log('@ localstate updated', localState);
   }, [localState]);
 
+  const leave = useCallback(async () => {
+    await client
+      .leave()
+      .then(() => setAuth(false))
+      .catch((err) => console.error('error occurred in leave method', err));
+  }, [client, setAuth]);
+
   const cameraToggle = useCallback(async () => {
     if (localState.videoOn) {
       localVideoTrack?.stop();
@@ -40,6 +49,13 @@ const Communication = ({
 
     localVideoTrack?.play(localContainer.current);
     setLocalState({ ...localState, videoOn: true });
+
+    // if (localVideoTrack) {
+    //   await client
+    //     .publish(localVideoTrack)
+    //     .then(() => console.log('@ video publish success'))
+    //     .catch((err) => console.error('error occurred in video toggle method', err));
+    // }
   }, [localState, localVideoTrack]);
 
   const audioToggle = useCallback(async () => {
@@ -50,16 +66,31 @@ const Communication = ({
 
     localAudioTrack?.play();
     setLocalState({ ...localState, audioOn: true });
+
+    // if (localAudioTrack) {
+    //   await client
+    //     .publish(localAudioTrack)
+    //     .then(() => console.log('@ audio publish success'))
+    //     .catch((err) => console.error('error occurred in audio toggle method', err));
+    // }
   }, [localState, localAudioTrack]);
 
   return (
     <S.CommunicationWrap>
       <h3>Communication</h3>
 
-      <button onClick={cameraToggle}>{localState.videoOn ? 'video off' : 'video on'}</button>
-      <button onClick={audioToggle}>{localState.audioOn ? 'audio off' : 'audio on'}</button>
+      <button type='button' onClick={leave}>
+        leave
+      </button>
 
-      <div ref={localContainer} className='video-player' style={{ width: 320, height: 240 }}></div>
+      <button type='button' onClick={cameraToggle}>
+        {localState.videoOn ? 'video off' : 'video on'}
+      </button>
+      <button type='button' onClick={audioToggle}>
+        {localState.audioOn ? 'audio off' : 'audio on'}
+      </button>
+
+      <div ref={localContainer} style={{ width: 320, height: 240 }} />
     </S.CommunicationWrap>
   );
 };
