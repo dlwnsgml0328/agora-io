@@ -76,13 +76,19 @@ const CreateRemoteTracksV2 = () => {
               {localVideoTrack && `localVideoTrack`}
               {joinState && localVideoTrack ? `(${client.uid})` : '?'}
             </p>
-            <MediaPlayer videoTrack={localVideoTrack} audioTrack={localAudioTrack}></MediaPlayer>
+            <MediaPlayer
+              localVideoTrack={localVideoTrack}
+              localAudioTrack={localAudioTrack}
+            ></MediaPlayer>
           </div>
 
           {remoteUsers.map((user) => (
             <div key={user.uid}>
               <p className='remote-player-text'>{`remoteVideo(${user.uid})`}</p>
-              <MediaPlayer videoTrack={user.videoTrack} audioTrack={user.audioTrack}></MediaPlayer>
+              <MediaPlayer
+                remoteVideoTrack={user.videoTrack}
+                remoteAudioTrack={user.audioTrack}
+              ></MediaPlayer>
             </div>
           ))}
         </div>
