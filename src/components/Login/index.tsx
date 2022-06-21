@@ -1,14 +1,16 @@
-import { IAgoraRTCClient } from 'agora-rtc-sdk-ng';
+import AgoraRTC, { IAgoraRTCClient, ILocalAudioTrack, ILocalVideoTrack } from 'agora-rtc-sdk-ng';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { config } from '../../config';
 import * as S from './index.styles';
 
-interface IAuth {
+interface IProps {
   client: IAgoraRTCClient;
   setAuth: React.Dispatch<React.SetStateAction<boolean>>;
+  setLocalVideoTrack: React.Dispatch<React.SetStateAction<ILocalVideoTrack | undefined>>;
+  setLocalAudioTrack: React.Dispatch<React.SetStateAction<ILocalAudioTrack | undefined>>;
 }
 
-const Login = ({ client, setAuth }: IAuth) => {
+const Login = ({ client, setAuth, setLocalVideoTrack, setLocalAudioTrack }: IProps) => {
   const [id, setId] = useState('');
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -19,6 +21,19 @@ const Login = ({ client, setAuth }: IAuth) => {
 
   const { APP_ID, CHANNEL, TOKEN } = config;
 
+  const makeLocal = useCallback(async () => {
+    const video = await AgoraRTC.createCameraVideoTrack().then((res: ILocalVideoTrack) =>
+      setLocalVideoTrack(res)
+    );
+    const audio = await AgoraRTC.createMicrophoneAudioTrack().then((res: ILocalAudioTrack) =>
+      setLocalAudioTrack(res)
+    );
+
+    Promise.all([video, audio])
+      .then(() => setAuth(true))
+      .catch((err) => console.log('@ err in promise', err));
+  }, [setAuth, setLocalVideoTrack, setLocalAudioTrack]);
+
   const join = useCallback(
     async (id: string) => {
       await client
@@ -26,12 +41,13 @@ const Login = ({ client, setAuth }: IAuth) => {
         .then((res) => {
           console.log(`@ join ${res}`);
         })
+        .then(() => makeLocal())
         .catch((err) => {
           console.error(`@ err occurred in join ${err}`);
         });
     },
 
-    [client, APP_ID, CHANNEL, TOKEN]
+    [client, APP_ID, CHANNEL, TOKEN, makeLocal]
   );
 
   const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
