@@ -1,24 +1,20 @@
-import AgoraRTC from 'agora-rtc-sdk-ng';
+import { IAgoraRTCClient } from 'agora-rtc-sdk-ng';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { config } from '../../config';
 import * as S from './index.styles';
 
 interface IAuth {
+  client: IAgoraRTCClient;
   setAuth: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Login = ({ setAuth }: IAuth) => {
+const Login = ({ client, setAuth }: IAuth) => {
   const [id, setId] = useState('');
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (inputRef.current) inputRef.current.focus();
-  });
-
-  const client = AgoraRTC.createClient({
-    codec: 'vp8',
-    mode: 'rtc',
   });
 
   const { APP_ID, CHANNEL, TOKEN } = config;
