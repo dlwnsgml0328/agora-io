@@ -71,24 +71,16 @@ const CreateRemoteTracksV2 = () => {
           <button type='button' onClick={() => leave()}>
             leave
           </button>
-          <div>
-            <p>
-              {localVideoTrack && `localVideoTrack`}
-              {joinState && localVideoTrack ? `(${client.uid})` : '?'}
-            </p>
-            <MediaPlayer
-              localVideoTrack={localVideoTrack}
-              localAudioTrack={localAudioTrack}
-            ></MediaPlayer>
-          </div>
+          <p>
+            {localVideoTrack && `localVideoTrack`}
+            {joinState && localVideoTrack ? `(${client.uid})` : '?'}
+          </p>
+          <MediaPlayer videoTrack={localVideoTrack} audioTrack={localAudioTrack}></MediaPlayer>
 
           {remoteUsers.map((user) => (
-            <div key={user.uid}>
+            <div className='remote-player-wrapper' key={user.uid}>
               <p className='remote-player-text'>{`remoteVideo(${user.uid})`}</p>
-              <MediaPlayer
-                remoteVideoTrack={user.videoTrack}
-                remoteAudioTrack={user.audioTrack}
-              ></MediaPlayer>
+              <MediaPlayer videoTrack={user.videoTrack} audioTrack={user.audioTrack}></MediaPlayer>
             </div>
           ))}
         </div>

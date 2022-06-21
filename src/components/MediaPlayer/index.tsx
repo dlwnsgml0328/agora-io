@@ -7,11 +7,8 @@ import {
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 
 export interface VideoPlayerProps {
-  localVideoTrack?: ILocalVideoTrack | undefined;
-  localAudioTrack?: ILocalAudioTrack | undefined;
-
-  remoteVideoTrack?: IRemoteVideoTrack | undefined;
-  remoteAudioTrack?: IRemoteAudioTrack | undefined;
+  videoTrack: ILocalVideoTrack | IRemoteVideoTrack | undefined;
+  audioTrack: ILocalAudioTrack | IRemoteAudioTrack | undefined;
 }
 
 const MediaPlayer = (props: VideoPlayerProps) => {
@@ -20,88 +17,64 @@ const MediaPlayer = (props: VideoPlayerProps) => {
     audioOn: true,
   });
 
-  const container = useRef<HTMLVideoElement>(null);
+  const container = useRef<HTMLDivElement>(null);
 
-  // local video 설정
+  // video 설정
   useEffect(() => {
     if (!container.current) return;
-    props.localVideoTrack?.play(container.current);
+    props.videoTrack?.play(container.current);
     return () => {
-      props.localVideoTrack?.stop();
+      props.videoTrack?.stop();
     };
-  }, [container, props.localVideoTrack]);
+  }, [container, props.videoTrack]);
 
-  // remote video 설정
+  // audio 설정
   useEffect(() => {
-    if (!container.current) return;
-    props.remoteVideoTrack?.play(container.current);
-    return () => {
-      props.remoteVideoTrack?.stop();
-    };
-  }, [container, props.remoteVideoTrack]);
-
-  // local audio 설정
-  useEffect(() => {
-    if (props.localAudioTrack) {
-      props.localAudioTrack?.play();
+    if (props.audioTrack) {
+      props.audioTrack?.play();
     }
     return () => {
-      props.localAudioTrack?.stop();
+      props.audioTrack?.stop();
     };
-  }, [props.localAudioTrack]);
-
-  // remote audio 설정
-  useEffect(() => {
-    if (props.remoteAudioTrack) {
-      props.remoteAudioTrack?.play();
-    }
-    return () => {
-      props.remoteAudioTrack?.stop();
-    };
-  }, [props.remoteAudioTrack]);
+  }, [props.audioTrack]);
 
   // video 버튼
   const cameraToggle = useCallback(async () => {
     if (localState.videoOn) {
-      props.localVideoTrack?.stop();
+      props.videoTrack?.stop();
       return setLocalState({ ...localState, videoOn: false });
     }
 
     if (!container.current) return;
 
-    props.localVideoTrack?.play(container.current);
+    props.videoTrack?.play(container.current);
     setLocalState({ ...localState, videoOn: true });
-  }, [localState, props.localVideoTrack]);
+  }, [localState, props.videoTrack]);
 
   // audio 버튼
   const audioToggle = useCallback(async () => {
     if (localState.audioOn) {
-      props.localAudioTrack?.stop();
+      props.audioTrack?.stop();
       return setLocalState({ ...localState, audioOn: false });
     }
 
-    props.localAudioTrack?.play();
-    props.localAudioTrack?.setVolume(50);
+    props.audioTrack?.play();
     setLocalState({ ...localState, audioOn: true });
-  }, [localState, props.localAudioTrack]);
+  }, [localState, props.audioTrack]);
 
   return (
     <>
-      <video
+      <div
         ref={container}
         className='video-player'
         style={{ width: '320px', height: '240px', background: '#000' }}
-      ></video>
-      {props.localAudioTrack && (
-        <>
-          <button type='button' onClick={cameraToggle}>
-            {props.localVideoTrack && localState.videoOn ? 'video off' : 'video on'}
-          </button>
-          <button type='button' onClick={audioToggle}>
-            {props.localAudioTrack && localState.audioOn ? 'audio off' : 'audio on'}
-          </button>
-        </>
-      )}
+      ></div>
+      <button type='button' onClick={cameraToggle}>
+        {localState.videoOn ? 'video off' : 'video on'}
+      </button>
+      <button type='button' onClick={audioToggle}>
+        {localState.audioOn ? 'audio off' : 'audio on'}
+      </button>
     </>
   );
 };
