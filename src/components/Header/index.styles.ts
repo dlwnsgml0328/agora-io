@@ -2,8 +2,9 @@ import styled from 'styled-components';
 
 export const Header = styled.div`
   ul {
-    padding-left: 0;
     display: flex;
+    align-items: center;
+    padding-left: 0;
   }
 
   li {
@@ -22,6 +23,25 @@ export const Header = styled.div`
 
     :hover {
       font-weight: bold;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    ul {
+      overflow-y: auto;
+      flex-wrap: wrap;
+      margin: 10px;
+      height: 140px;
+    }
+
+    li {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #000;
+      width: 100%;
+    }
+
+    a {
+      font-size: 5vw;
     }
   }
 `;

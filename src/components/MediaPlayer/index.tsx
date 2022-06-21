@@ -5,6 +5,7 @@ import {
   IRemoteAudioTrack,
 } from 'agora-rtc-sdk-ng';
 import { useRef, useEffect, useState, useCallback } from 'react';
+import * as S from './index.styles';
 
 export interface VideoPlayerProps {
   videoTrack: ILocalVideoTrack | IRemoteVideoTrack | undefined;
@@ -63,19 +64,15 @@ const MediaPlayer = (props: VideoPlayerProps) => {
   // }, [localState, props.audioTrack]);
 
   return (
-    <>
-      <div
-        ref={container}
-        className='video-player'
-        style={{ width: '320px', height: '240px', background: '#000' }}
-      ></div>
+    <S.MediaPlayerWrap>
+      <div ref={container} className='video-player'></div>
       <button type='button' onClick={cameraToggle}>
         {localState.videoOn ? 'video off' : 'video on'}
       </button>
       {/* <button type='button' onClick={audioToggle}>
         {localState.audioOn ? 'audio off' : 'audio on'}
       </button> */}
-    </>
+    </S.MediaPlayerWrap>
   );
 };
 
