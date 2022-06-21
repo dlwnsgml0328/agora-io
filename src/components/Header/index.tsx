@@ -15,7 +15,10 @@ const Header = () => {
           <Link to='/CreateLocalTracks'>Create Local Tracks</Link>
         </li>
         <li>
-          <Link to='/CreateRemoteTracks'>Create Remote Tracks</Link>
+          <Link to='/CreateRemoteTracks'>Create Remote Tracks 💣</Link>
+        </li>
+        <li>
+          <Link to='/CreateRemoteTracks-v2'>Create Remote Tracks V2 🔥</Link>
         </li>
         <li>
           <Link to='/PublishAndSubscribe'>Publish And Subscribe</Link>
