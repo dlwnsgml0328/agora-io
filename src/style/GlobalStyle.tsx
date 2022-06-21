@@ -9,5 +9,9 @@ h1,h2,h3,h4,h5{
 button {
     margin-right: 0.5%;
 }
+
+input, button{
+    padding: 5px;
+}
 `;
 export default GlobalStyle;
