@@ -7,6 +7,9 @@ import AgoraRTC, {
   ICameraVideoTrack,
   IMicrophoneAudioTrack,
   MicrophoneAudioTrackInitConfig,
+  ClientRole,
+  IRemoteTrack,
+  UID,
 } from 'agora-rtc-sdk-ng';
 import { useEffect, useState } from 'react';
 
@@ -41,25 +44,37 @@ const useAgora = (
     return [microphoneTrack, cameraTrack];
   };
 
-  const join = async (appid: string, channel: string, token: string, uid: string | number) => {
+  const join = async (
+    appid: string,
+    channel: string,
+    token: string,
+    uid: string | number,
+    role?: ClientRole
+  ) => {
     if (!client) return;
 
-    console.log('@ join called');
-    const [microphoneTrack, cameraTrack] = await createLocalTracks();
+    if (role) {
+      client.setClientRole(role);
 
-    await client
-      .join(appid, channel, token, uid)
-      .then(() => console.log('@client joined success'))
-      .catch((err) => console.log('@client joined error', err));
-    await client
-      .publish([microphoneTrack, cameraTrack])
-      .then(() => console.log('@ publish success'))
-      .catch((err) => console.log('@client publish error', err));
+      // 일단 여기에 정의하기
+    } else {
+      console.log('@ join called');
+      const [microphoneTrack, cameraTrack] = await createLocalTracks();
 
-    (window as any).client = client;
-    (window as any).videoTrack = cameraTrack;
+      await client
+        .join(appid, channel, token, uid)
+        .then(() => console.log('@client joined success'))
+        .catch((err) => console.log('@client joined error', err));
+      await client
+        .publish([microphoneTrack, cameraTrack])
+        .then(() => console.log('@ publish success'))
+        .catch((err) => console.log('@client publish error', err));
 
-    setJoinState(true);
+      (window as any).client = client;
+      (window as any).videoTrack = cameraTrack;
+
+      setJoinState(true);
+    }
   };
 
   const leave = async () => {
@@ -85,7 +100,9 @@ const useAgora = (
 
     const handleUserPublished = async (user: IAgoraRTCRemoteUser, mediaType: 'audio' | 'video') => {
       console.log('@ handleUser Published 🔥', user, mediaType);
-      await client.subscribe(user, mediaType);
+      await client
+        .subscribe(user, mediaType)
+        .then((res: IRemoteTrack) => console.log('@ subscribe response 🔥: ', res));
       // toggle rerender while state of remoteUsers changed.
       setRemoteUsers((remoteUsers) => Array.from(client.remoteUsers));
     };
@@ -101,16 +118,27 @@ const useAgora = (
       console.log('@ handleUser Left 🔥', user);
       setRemoteUsers((remoteUsers) => Array.from(client.remoteUsers));
     };
+    const handleUserInfoUpdated = (uid: UID, msg: string) => {
+      console.log('@ user-info-updated 🔥 ', uid, msg);
+    };
     client.on('user-published', handleUserPublished);
     client.on('user-unpublished', handleUserUnpublished);
     client.on('user-joined', handleUserJoined);
     client.on('user-left', handleUserLeft);
+
+    // client.on('published-user-list', (users: IAgoraRTCRemoteUser) =>
+    //   console.log('@ published-user-list updated 🔥', users)
+    // );
+
+    // https://docs.agora.io/en/Interactive%20Broadcast/API%20Reference/web_ng/interfaces/iagorartcclient.html#event_user_info_updated
+    client.on('user-info-updated', handleUserInfoUpdated);
 
     return () => {
       client.off('user-published', handleUserPublished);
       client.off('user-unpublished', handleUserUnpublished);
       client.off('user-joined', handleUserJoined);
       client.off('user-left', handleUserLeft);
+      client.off('user-info-updated', handleUserInfoUpdated);
     };
   }, [client]);
 
@@ -118,3 +146,12 @@ const useAgora = (
 };
 
 export default useAgora;
+
+/**
+client.on("user-info-updated", (uid, msg) => {
+  switch (msg) {
+    case "mute-audio":  ...
+    case "mute-video":  ... 
+  }
+});
+ */

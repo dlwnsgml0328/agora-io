@@ -1,6 +1,7 @@
 import AgoraRTC from 'agora-rtc-sdk-ng';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import MediaPlayer from '../../components/MediaPlayer';
+import LocalMediaPlayer from '../../components/LocalMediaPlayer';
+import RemoteMediaPlayer from '../../components/RemoteMediaPlayer';
 import { config } from '../../config';
 import useAgora from '../../hooks/useAgora';
 
@@ -74,12 +75,15 @@ const CreateRemoteTracksV2 = () => {
             {localVideoTrack && `localVideoTrack`}
             {joinState && localVideoTrack ? `(${client.uid})` : '?'}
           </p>
-          <MediaPlayer videoTrack={localVideoTrack} audioTrack={undefined}></MediaPlayer>
+          <LocalMediaPlayer videoTrack={localVideoTrack} audioTrack={undefined}></LocalMediaPlayer>
 
           {remoteUsers.map((user) => (
             <div className='remote-player-wrapper' key={user.uid}>
               <p className='remote-player-text'>{`remoteVideo(${user.uid})`}</p>
-              <MediaPlayer videoTrack={user.videoTrack} audioTrack={user.audioTrack}></MediaPlayer>
+              <RemoteMediaPlayer
+                videoTrack={user.videoTrack}
+                audioTrack={user.audioTrack}
+              ></RemoteMediaPlayer>
             </div>
           ))}
         </div>

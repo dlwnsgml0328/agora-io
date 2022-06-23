@@ -1,18 +1,13 @@
-import {
-  ILocalVideoTrack,
-  IRemoteVideoTrack,
-  ILocalAudioTrack,
-  IRemoteAudioTrack,
-} from 'agora-rtc-sdk-ng';
+import { ILocalVideoTrack, ILocalAudioTrack } from 'agora-rtc-sdk-ng';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import * as S from './index.styles';
 
 export interface VideoPlayerProps {
-  videoTrack: ILocalVideoTrack | IRemoteVideoTrack | undefined;
-  audioTrack: ILocalAudioTrack | IRemoteAudioTrack | undefined;
+  videoTrack: ILocalVideoTrack | undefined;
+  audioTrack: ILocalAudioTrack | undefined;
 }
 
-const MediaPlayer = (props: VideoPlayerProps) => {
+const LocalMediaPlayer = ({ videoTrack, audioTrack }: VideoPlayerProps) => {
   const [localState, setLocalState] = useState({
     videoOn: true,
     audioOn: true,
@@ -23,34 +18,37 @@ const MediaPlayer = (props: VideoPlayerProps) => {
   // video 설정
   useEffect(() => {
     if (!container.current) return;
-    props.videoTrack?.play(container.current);
+    videoTrack?.play(container.current);
+
     return () => {
-      props.videoTrack?.stop();
+      videoTrack?.stop();
     };
-  }, [container, props.videoTrack]);
+  }, [container, videoTrack]);
 
   // audio 설정
   useEffect(() => {
-    if (props.audioTrack) {
-      props.audioTrack?.play();
+    if (audioTrack) {
+      audioTrack?.play();
     }
     return () => {
-      props.audioTrack?.stop();
+      audioTrack?.stop();
     };
-  }, [props.audioTrack]);
+  }, [audioTrack]);
 
   // video 버튼
   const cameraToggle = useCallback(async () => {
     if (localState.videoOn) {
-      props.videoTrack?.stop();
+      videoTrack?.stop();
+      videoTrack?.setEnabled(false);
       return setLocalState({ ...localState, videoOn: false });
     }
 
     if (!container.current) return;
 
-    props.videoTrack?.play(container.current);
+    videoTrack?.play(container.current);
+    videoTrack?.setEnabled(true);
     setLocalState({ ...localState, videoOn: true });
-  }, [localState, props.videoTrack]);
+  }, [localState, videoTrack]);
 
   // // audio 버튼
   // const audioToggle = useCallback(async () => {
@@ -64,7 +62,7 @@ const MediaPlayer = (props: VideoPlayerProps) => {
   // }, [localState, props.audioTrack]);
 
   return (
-    <S.MediaPlayerWrap>
+    <S.LocalMediaPlayerWrap>
       <div ref={container} className='video-player'></div>
       <button type='button' onClick={cameraToggle}>
         {localState.videoOn ? 'video off' : 'video on'}
@@ -72,8 +70,8 @@ const MediaPlayer = (props: VideoPlayerProps) => {
       {/* <button type='button' onClick={audioToggle}>
         {localState.audioOn ? 'audio off' : 'audio on'}
       </button> */}
-    </S.MediaPlayerWrap>
+    </S.LocalMediaPlayerWrap>
   );
 };
 
-export default MediaPlayer;
+export default LocalMediaPlayer;

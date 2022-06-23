@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const MediaPlayerWrap = styled.div`
+export const RemoteMediaPlayerWrap = styled.div`
   .video-player {
     width: 350px;
     height: 350px;
