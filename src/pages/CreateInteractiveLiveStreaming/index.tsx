@@ -18,23 +18,9 @@ const CreateInteractiveLiveStreaming = () => {
   const { APP_ID, CHANNEL, TOKEN } = LIVE_CONFIG;
   const { localVideoTrack, leave, join, joinState, remoteUsers } = useAgoraLive(client);
 
-  console.log('@ client.remoteUsers 🔥: ', client.remoteUsers);
-
-  useEffect(() => {
-    if (remoteUsers) console.log('@ remoteUsers 💣:', remoteUsers);
-  }, [remoteUsers]);
-
-  useEffect(() => {
-    console.log('role in', localStorage.getItem('role'));
-  }, []);
-
   useEffect(() => {
     if (roleRef.current) roleRef.current.focus();
   }, []);
-
-  useEffect(() => {
-    if (role) console.log('role changed', role);
-  }, [role]);
 
   const setCurrentRole = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setRole(e.target.value);
