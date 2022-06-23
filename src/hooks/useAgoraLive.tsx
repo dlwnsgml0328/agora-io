@@ -44,23 +44,36 @@ const useAgora = (
     return [microphoneTrack, cameraTrack];
   };
 
-  const join = async (appid: string, channel: string, token: string, uid: string | number) => {
+  const join = async (
+    appid: string,
+    channel: string,
+    token: string,
+    uid: string | number,
+    role: ClientRole
+  ) => {
     if (!client) return;
 
-    console.log('@ join called');
-    const [microphoneTrack, cameraTrack] = await createLocalTracks();
+    client.setClientRole(role);
 
     await client
       .join(appid, channel, token, uid)
       .then(() => console.log('@client joined success'))
       .catch((err) => console.log('@client joined error', err));
-    await client
-      .publish([microphoneTrack, cameraTrack])
-      .then(() => console.log('@ publish success'))
-      .catch((err) => console.log('@client publish error', err));
 
-    (window as any).client = client;
-    (window as any).videoTrack = cameraTrack;
+    // 역할에 따라 달라질듯
+    if (role === 'host') {
+      const [microphoneTrack, cameraTrack] = await createLocalTracks();
+
+      await client
+        .publish([microphoneTrack, cameraTrack])
+        .then(() => console.log('@ publish success'))
+        .catch((err) => console.log('@client publish error', err));
+
+      (window as any).client = client;
+      (window as any).videoTrack = cameraTrack;
+    }
+
+    console.log('@ join called');
 
     setJoinState(true);
   };
@@ -136,10 +149,10 @@ const useAgora = (
 export default useAgora;
 
 /**
-client.on("user-info-updated", (uid, msg) => {
-  switch (msg) {
-    case "mute-audio":  ...
-    case "mute-video":  ... 
-  }
-});
- */
+  client.on("user-info-updated", (uid, msg) => {
+    switch (msg) {
+      case "mute-audio":  ...
+      case "mute-video":  ... 
+    }
+  });
+   */

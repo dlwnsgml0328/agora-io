@@ -7,17 +7,9 @@ export interface IRemoteMediaPlayerProps {
   audioTrack: IRemoteAudioTrack | undefined;
 }
 const RemoteMediaPlayer = ({ videoTrack, audioTrack }: IRemoteMediaPlayerProps) => {
-  //   const [remoteState, setRemoteState] = useState({
-  //     videOn: true,
-  //     audioOn: true,
-  //   });
-
   const container = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (videoTrack) console.log('@ Remote videoTrack 💣', videoTrack.getMediaStreamTrack());
-  }, [videoTrack]);
-
+  // video 설정
   useEffect(() => {
     if (!container.current) return;
 
@@ -41,10 +33,6 @@ const RemoteMediaPlayer = ({ videoTrack, audioTrack }: IRemoteMediaPlayerProps) 
   return (
     <S.RemoteMediaPlayerWrap>
       <div ref={container} className='video-player'></div>
-
-      {/* <button type='button' onClick={audioToggle}>
-    {RemoteState.audioOn ? 'audio off' : 'audio on'}
-  </button> */}
     </S.RemoteMediaPlayerWrap>
   );
 };

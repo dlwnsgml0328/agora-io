@@ -10,6 +10,7 @@
     "@types/node": "^16.11.41",
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
+    "agora-react-uikit": "^1.0.8",
     "agora-rtc-sdk-ng": "^4.12.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

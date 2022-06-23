@@ -2423,7 +2423,22 @@ agent-base@6:
   dependencies:
     debug "4"
 
-agora-rtc-sdk-ng@^4.12.0:
+agora-react-uikit@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/agora-react-uikit/-/agora-react-uikit-1.0.8.tgz#4cb2ae544b3940b3d7e34551c7c0aa31db2c3c88"
+  integrity sha512-o4tuK8MR3W1igJOS04Cr7fbRsx2N3YGFROx9JBchxS31/TbRlbHuxZHDXB5GEZXbp091kqyXu8x11cMlOjky+w==
+  dependencies:
+    agora-rtc-react "^1.1.0"
+    agora-rtm-react "^1.1.0"
+
+agora-rtc-react@^1.1.0:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/agora-rtc-react/-/agora-rtc-react-1.1.3.tgz#616527fe453b95fdd8f6e39ccba86496ecdbb686"
+  integrity sha512-AgmDoeLoL3xC7u60lTehHi1GvHsP8l09CX3bn+NyHx6E0Dmbbxdtqkn+YrlakWa4IYOAn0d/9oKvuGrNtUiOpA==
+  dependencies:
+    agora-rtc-sdk-ng "^4.3.0"
+
+agora-rtc-sdk-ng@^4.12.0, agora-rtc-sdk-ng@^4.3.0:
   version "4.12.0"
   resolved "https://registry.yarnpkg.com/agora-rtc-sdk-ng/-/agora-rtc-sdk-ng-4.12.0.tgz#98dd31771c875709c5bb63770edf2f5bf82378c2"
   integrity sha512-lKL6PTw6PPzIX52Eq7Awq+oQdZR5y2DnA9RIpD+Gv+Srr5JsrCbh7eA+9KrOnncEPGOlraz/Phx3GZuGyFAMPA==
@@ -2434,6 +2449,18 @@ agora-rte-extension@^1.0.22:
   version "1.0.23"
   resolved "https://registry.yarnpkg.com/agora-rte-extension/-/agora-rte-extension-1.0.23.tgz#54a7215fd2cdcf2553d83570530950054f1e59a6"
   integrity sha512-X2cGBg+L5ZJIFU91qvMASvRsBfg1HXTktVG3YROw9wxHsILSI7jgF9R9XraLc3fNX/UjovaYAlUW+hiJe0v6Xw==
+
+agora-rtm-react@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/agora-rtm-react/-/agora-rtm-react-1.1.0.tgz#95f9d0e5a86526c9bd89431a5e219f3299f680e0"
+  integrity sha512-L8HbklXcTKhEDE73xTUvBhUb3d0L0D9mAkF7yeiVg2YHKqdDFPtnKHTuyUqWo8vz90d+wnNp+BMUyYLDvSjMeQ==
+  dependencies:
+    agora-rtm-sdk "^1.4.4"
+
+agora-rtm-sdk@^1.4.4:
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/agora-rtm-sdk/-/agora-rtm-sdk-1.4.5.tgz#a7d9d55b0821bc6858d23ff837319f4d7d2c8a99"
+  integrity sha512-uVRxKmQpbWyIk7Z+5hCREhgY95LJDYl67vLZu9cklb7p8ja9dqvzVHeS62nnYtM1oJCQPdtaMTW/cbU1qdxU7g==
 
 ajv-formats@^2.1.1:
   version "2.1.1"

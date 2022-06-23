@@ -12,6 +12,8 @@ import AdjustVolume from './pages/AdjustVolume';
 
 import NotFound from './pages/NotFound';
 import CreateRemoteTracksV2 from './pages/CreateRemoteTracks_v2';
+import CreateInteractiveLiveStreaming from './pages/CreateInteractiveLiveStreaming';
+import AgoraReactUIKit from './pages/AgoraReactUIKit';
 
 function App() {
   return (
@@ -27,6 +29,15 @@ function App() {
         <Route path='/CreateRemoteTracks-v2' element={<CreateRemoteTracksV2 />} />
         <Route path='/PublishAndSubscribe' element={<PublishAndSubscribe />} />
         <Route path='/AdjustVolume' element={<AdjustVolume />} />
+
+        {/* Interactive Live Stream*/}
+        <Route
+          path='/create-interactive-live-streaming'
+          element={<CreateInteractiveLiveStreaming />}
+        />
+
+        {/* UI Kit (useless) */}
+        <Route path='/Agora-react-ui-ki' element={<AgoraReactUIKit />} />
 
         <Route path='*' element={<NotFound />} />
       </Routes>

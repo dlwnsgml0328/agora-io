@@ -12,19 +12,13 @@ const Header = () => {
           <Link to='/JoinAndLeave'>Join And Leave</Link>
         </li>
         <li>
-          <Link to='/CreateLocalTracks'>Create Local Tracks</Link>
-        </li>
-        <li>
-          <Link to='/CreateRemoteTracks'>Create Remote Tracks 💣</Link>
-        </li>
-        <li>
           <Link to='/CreateRemoteTracks-v2'>Create Remote Tracks V2 🔥</Link>
         </li>
         <li>
-          <Link to='/PublishAndSubscribe'>Publish And Subscribe</Link>
+          <Link to='/create-interactive-live-streaming'>Create Interactive live streaming 🖥</Link>
         </li>
         <li>
-          <Link to='/AdjustVolume'>Adjust Volume</Link>
+          <Link to='/Agora-react-ui-ki'>Agora React UI Kit</Link>
         </li>
       </ul>
     </S.Header>

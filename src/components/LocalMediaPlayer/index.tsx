@@ -51,15 +51,15 @@ const LocalMediaPlayer = ({ videoTrack, audioTrack }: VideoPlayerProps) => {
   }, [localState, videoTrack]);
 
   // // audio 버튼
-  // const audioToggle = useCallback(async () => {
-  //   if (localState.audioOn) {
-  //     props.audioTrack?.stop();
-  //     return setLocalState({ ...localState, audioOn: false });
-  //   }
+  const audioToggle = useCallback(async () => {
+    if (localState.audioOn) {
+      audioTrack?.stop();
+      return setLocalState({ ...localState, audioOn: false });
+    }
 
-  //   props.audioTrack?.play();
-  //   setLocalState({ ...localState, audioOn: true });
-  // }, [localState, props.audioTrack]);
+    audioTrack?.play();
+    setLocalState({ ...localState, audioOn: true });
+  }, [localState, audioTrack]);
 
   return (
     <S.LocalMediaPlayerWrap>
@@ -67,9 +67,9 @@ const LocalMediaPlayer = ({ videoTrack, audioTrack }: VideoPlayerProps) => {
       <button type='button' onClick={cameraToggle}>
         {localState.videoOn ? 'video off' : 'video on'}
       </button>
-      {/* <button type='button' onClick={audioToggle}>
-        {localState.audioOn ? 'audio off' : 'audio on'}
-      </button> */}
+      <button type='button' onClick={audioToggle}>
+        {localState.audioOn ? 'mute' : 'un mute'}
+      </button>
     </S.LocalMediaPlayerWrap>
   );
 };
