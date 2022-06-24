@@ -14,6 +14,7 @@ import NotFound from './pages/NotFound';
 import CreateRemoteTracksV2 from './pages/CreateRemoteTracks_v2';
 import CreateInteractiveLiveStreaming from './pages/CreateInteractiveLiveStreaming';
 import AgoraReactUIKit from './pages/AgoraReactUIKit';
+import RTCQuickStart from './pages/RTCQuickStart';
 
 function App() {
   return (
@@ -38,6 +39,8 @@ function App() {
 
         {/* UI Kit (useless) */}
         <Route path='/Agora-react-ui-ki' element={<AgoraReactUIKit />} />
+
+        <Route path='/RTCQuickStart' element={<RTCQuickStart />} />
 
         <Route path='*' element={<NotFound />} />
       </Routes>

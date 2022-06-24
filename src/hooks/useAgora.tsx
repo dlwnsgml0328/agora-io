@@ -7,7 +7,7 @@ import AgoraRTC, {
   ICameraVideoTrack,
   IMicrophoneAudioTrack,
   MicrophoneAudioTrackInitConfig,
-  ClientRole,
+  // ClientRole,
   IRemoteTrack,
   UID,
 } from 'agora-rtc-sdk-ng';

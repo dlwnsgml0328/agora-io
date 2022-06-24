@@ -2457,7 +2457,7 @@ agora-rtm-react@^1.1.0:
   dependencies:
     agora-rtm-sdk "^1.4.4"
 
-agora-rtm-sdk@^1.4.4:
+agora-rtm-sdk@^1.4.4, agora-rtm-sdk@^1.4.5:
   version "1.4.5"
   resolved "https://registry.yarnpkg.com/agora-rtm-sdk/-/agora-rtm-sdk-1.4.5.tgz#a7d9d55b0821bc6858d23ff837319f4d7d2c8a99"
   integrity sha512-uVRxKmQpbWyIk7Z+5hCREhgY95LJDYl67vLZu9cklb7p8ja9dqvzVHeS62nnYtM1oJCQPdtaMTW/cbU1qdxU7g==

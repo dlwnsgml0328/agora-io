@@ -18,7 +18,7 @@ const Header = () => {
           <Link to='/create-interactive-live-streaming'>Create Interactive live streaming 🖥</Link>
         </li>
         <li>
-          <Link to='/Agora-react-ui-ki'>Agora React UI Kit</Link>
+          <Link to='/RTCQuickStart'>RTC quick start 🔥</Link>
         </li>
       </ul>
     </S.Header>
