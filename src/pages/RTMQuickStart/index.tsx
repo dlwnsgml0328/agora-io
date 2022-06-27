@@ -1,5 +1,7 @@
-import AgoraRTM, { RtmStatusCode } from 'agora-rtm-sdk';
+import AgoraRTM from 'agora-rtm-sdk';
 import React, { useCallback, useEffect, useState } from 'react';
+import useRTMChannel from '../../hooks/userRTMChannel';
+import useRTMClient from '../../hooks/useRTMClient';
 
 const APP_ID = process.env.REACT_APP_RTM_ID;
 const client = AgoraRTM.createInstance(APP_ID);
@@ -9,6 +11,9 @@ const RTMQuickStart = () => {
   const [auth, setAuth] = useState(false);
   const [user, setUser] = useState('');
   const [config, setConfig] = useState({ uid: '', token: '' });
+
+  const { connectionState } = useRTMClient(client);
+  const { channelState } = useRTMChannel(channel);
 
   const setCurrentUser = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setUser(e.target.value);
@@ -51,30 +56,13 @@ const RTMQuickStart = () => {
     }
   };
 
-  // client event check
   useEffect(() => {
-    const connectionStateChanged = (
-      newState: RtmStatusCode.ConnectionState,
-      reason: RtmStatusCode.ConnectionChangeReason
-    ) => {
-      console.log('newState:', newState, '\nreason:', reason);
-    };
-    client.on('ConnectionStateChanged', connectionStateChanged);
+    if (connectionState.newState) console.log('@ connectionStateChanged', connectionState);
+  }, [connectionState]);
 
-    return () => {
-      client.off('ConnectionStateChanged', connectionStateChanged);
-    };
-  }, []);
-
-  // channel event check
   useEffect(() => {
-    const memberJoined = (id: string) => console.log('memberJoined', id);
-    channel.on('MemberJoined', memberJoined);
-
-    return () => {
-      channel.off('MemberJoined', memberJoined);
-    };
-  }, []);
+    if (channelState) console.log('@ channelState updated:', channelState);
+  }, [channelState]);
 
   return (
     <>
@@ -99,7 +87,9 @@ const RTMQuickStart = () => {
         <div>
           <h3>Join</h3>
 
-          <div id='userName'></div>
+          <div id='userName'>
+            <h3>Hello, {config.uid}</h3>
+          </div>
           <button type='button' onClick={onLogOut}>
             로그아웃
           </button>
