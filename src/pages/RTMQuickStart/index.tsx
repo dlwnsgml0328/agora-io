@@ -1,28 +1,51 @@
 import AgoraRTM from 'agora-rtm-sdk';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useRTMChannel from '../../hooks/userRTMChannel';
 import useRTMClient from '../../hooks/useRTMClient';
+
+import * as S from './index.styles';
 
 const APP_ID = process.env.REACT_APP_RTM_ID;
 const client = AgoraRTM.createInstance(APP_ID);
 const channel = client.createChannel('test_eazel');
 
+const USER_A = {
+  uid: '1796',
+  token: process.env.REACT_APP_USER_A,
+};
+
+const USER_B = {
+  uid: '0328',
+  token: process.env.REACT_APP_USER_B,
+};
+
 const RTMQuickStart = () => {
   const [auth, setAuth] = useState(false);
   const [user, setUser] = useState('');
   const [config, setConfig] = useState({ uid: '', token: '' });
+  const [isChannel, setIsChannel] = useState(false);
+
+  const [msgInput, setMsgInput] = useState('');
 
   const { connectionState } = useRTMClient(client);
   const { channelState } = useRTMChannel(channel);
 
-  const setCurrentUser = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (connectionState.newState) console.log('@ connectionStateChanged', connectionState);
+  }, [connectionState]);
+
+  useEffect(() => {
+    if (channelState) console.log('@ channelState updated:', channelState);
+  }, [channelState]);
+
+  const setCurrentUser = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser(e.target.value);
     if (e.target.value === 'A') {
-      setConfig({ uid: '1796', token: process.env.REACT_APP_USER_A });
+      setConfig(USER_A);
     } else {
-      setConfig({ uid: '0328', token: process.env.REACT_APP_USER_B });
+      setConfig(USER_B);
     }
-  }, []);
+  };
 
   const onSubmit = async () => {
     await client
@@ -41,28 +64,56 @@ const RTMQuickStart = () => {
   };
 
   const onEnter = async () => {
-    await channel.join().then(() => {
-      console.log('@ channel join successfully');
-    });
+    await channel
+      .join()
+      .then(() => {
+        console.log('@ channel join successfully');
+      })
+      .then(() => {
+        setIsChannel(true);
+      });
   };
 
   const onLeave = async () => {
     if (channel !== null) {
-      await channel.leave().then(() => {
-        console.log('@ channel leave successfully');
-      });
+      await channel
+        .leave()
+        .then(() => {
+          console.log('@ channel leave successfully');
+        })
+        .then(() => {
+          setIsChannel(false);
+        });
     } else {
       console.log('Channel is empty');
     }
   };
 
-  useEffect(() => {
-    if (connectionState.newState) console.log('@ connectionStateChanged', connectionState);
-  }, [connectionState]);
+  const onSend = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (msgInput.length === 0) {
+      alert('Invalid value');
+      return;
+    }
 
-  useEffect(() => {
-    if (channelState) console.log('@ channelState updated:', channelState);
-  }, [channelState]);
+    await channel
+      .sendMessage({ text: msgInput })
+      .then(() => {
+        AddText(msgInput);
+        setMsgInput('');
+      })
+      .catch((err) => console.error('error occurred in sending message', err));
+  };
+
+  const AddText = (msg: string) => {
+    const textArea = document.querySelector('.conversation');
+
+    const text = document.createElement('div');
+    text.className = 'local';
+    text.innerHTML = `<span class="uid">🌝</span><span class="msg">${msg}</span>`;
+
+    if (textArea) textArea.append(text);
+  };
 
   return (
     <>
@@ -93,12 +144,30 @@ const RTMQuickStart = () => {
           <button type='button' onClick={onLogOut}>
             로그아웃
           </button>
-          <button type='button' onClick={onEnter}>
-            enter
-          </button>
-          <button type='button' onClick={onLeave}>
-            leave
-          </button>
+          {!isChannel ? (
+            <button type='button' onClick={onEnter}>
+              enter
+            </button>
+          ) : (
+            <button type='button' onClick={onLeave}>
+              leave
+            </button>
+          )}
+
+          {isChannel && (
+            <S.MessageWrap>
+              <ul>
+                <li>In channel: {channel.channelId}</li>
+              </ul>
+
+              <div className='conversation'></div>
+
+              <form className='form-wrap' onSubmit={onSend}>
+                <input type='text' value={msgInput} onChange={(e) => setMsgInput(e.target.value)} />
+                <button type='submit'>전송</button>
+              </form>
+            </S.MessageWrap>
+          )}
         </div>
       )}
     </>

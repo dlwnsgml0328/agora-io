@@ -1,4 +1,4 @@
-import { RtmChannel } from 'agora-rtm-sdk';
+import { RtmChannel, RtmMessage } from 'agora-rtm-sdk';
 import { useEffect, useState } from 'react';
 
 interface IChannelState {
@@ -8,17 +8,37 @@ interface IChannelState {
 
 const useRTMChannel = (channel: RtmChannel) => {
   const [channelState, setChannelState] = useState<IChannelState>({ id: '', msg: '' });
+
+  const AddTextRemote = (message: string, memberId: string) => {
+    const textArea = document.querySelector('.conversation');
+
+    const text = document.createElement('div');
+    text.className = 'remote';
+    text.innerHTML = `<span class="uid">🌞</span><span class="msg">${message}</span>`;
+
+    if (textArea) textArea.append(text);
+  };
+
   useEffect(() => {
     if (!channel) return;
     const memberJoined = (id: string) => setChannelState({ id: id, msg: 'memberJoined' });
     const memberLeft = (id: string) => setChannelState({ id: id, msg: 'memberLeft' });
+    const channelMessage = (message: RtmMessage, memberId: string) => {
+      console.log('message.messageType: ', message.messageType);
+      if (message.messageType === 'TEXT') {
+        // console.log(`message: ` + message.text + `\nmemberId: ` + memberId);
+        AddTextRemote(message.text, memberId);
+      }
+    };
 
     channel.on('MemberJoined', memberJoined);
     channel.on('MemberLeft', memberLeft);
+    channel.on('ChannelMessage', channelMessage);
 
     return () => {
       channel.off('MemberJoined', memberJoined);
       channel.off('MemberLeft', memberLeft);
+      channel.off('ChannelMessage', channelMessage);
     };
   }, [channel]);
 
@@ -26,3 +46,11 @@ const useRTMChannel = (channel: RtmChannel) => {
 };
 
 export default useRTMChannel;
+
+/**
+ *  ChannelMessage: (
+      message: RtmMessage,
+      memberId: string,
+      messagePros: ReceivedMessageProperties
+    ) => void;
+ */
