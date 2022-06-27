@@ -3,14 +3,17 @@ import AgoraRTM from 'agora-rtm-sdk';
 // Params for login
 let options = {
   uid: '',
-  token: '',
+  token: '', // 1796
 };
 
 // Your app ID
-const appID = 'a21a31a4b3c14997b018c2e87d403a5f';
-// Your token
+const appID = '8a23d043d1f2493b9e50b358002542c7';
+// Your token - 1796
 options.token =
-  '006a21a31a4b3c14997b018c2e87d403a5fIADXAdcsSb7oIMEOqaKm/CrMbj6EF0rhviG/+YA/DiwS6O6ryYkAAAAAEADXbWvdiLy2YgEA6AOIvLZi';
+  '0068a23d043d1f2493b9e50b358002542c7IABjzCAV/fYdH/eGK1AHDYCRCsTjWKkhsyIoO0UHu4jGL5uQMDIAAAAAEACeMJIAflW6YgEA6AN+Vbpi';
+// Your remote token - 0328
+options.token_2 =
+  '0068a23d043d1f2493b9e50b358002542c7IABjzCAV/fYdH/eGK1AHDYCRCsTjWKkhsyIoO0UHu4jGL5uQMDIAAAAAEACeMJIAflW6YgEA6AN+Vbpi';
 
 // Initialize client
 const client = AgoraRTM.createInstance(appID);
@@ -23,6 +26,7 @@ client.on('MessageFromPeer', function (message, peerId) {
     .appendChild(document.createElement('div'))
     .append('Message from: ' + peerId + ' Message: ' + message);
 });
+
 // Display connection state changes
 client.on('ConnectionStateChanged', function (state, reason) {
   document

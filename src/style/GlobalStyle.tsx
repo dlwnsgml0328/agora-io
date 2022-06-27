@@ -10,8 +10,10 @@ button {
     margin-right: 0.5%;
 }
 
-input, button{
+input, button, label{
     padding: 5px;
 }
+
+
 `;
 export default GlobalStyle;

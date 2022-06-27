@@ -20,6 +20,9 @@ const Header = () => {
         <li>
           <Link to='/RTCQuickStart'>RTC quick start 🔥</Link>
         </li>
+        <li>
+          <Link to='/RTMQuickStart'>RTM quick start 🔥</Link>
+        </li>
       </ul>
     </S.Header>
   );
