@@ -21,6 +21,7 @@ const useRTMClient = (client: RtmClient | undefined) => {
       }
       setConnectionState({ newState: newState, reason: reason });
     };
+
     const messageFromPeer = (
       message: RtmMessage,
       peerId: string,

@@ -8,6 +8,7 @@ interface IChannelState {
 
 const useRTMChannel = (channel: RtmChannel) => {
   const [channelState, setChannelState] = useState<IChannelState>({ id: '', msg: '' });
+  const [scroll, setScroll] = useState(0);
 
   const getMembers = useCallback(
     () =>
@@ -32,10 +33,12 @@ const useRTMChannel = (channel: RtmChannel) => {
     const memberJoined = (id: string) => setChannelState({ id: id, msg: 'memberJoined' });
     const memberLeft = (id: string) => setChannelState({ id: id, msg: 'memberLeft' });
     const channelMessage = (message: RtmMessage, memberId: string) => {
-      console.log('message.messageType: ', message.messageType);
+      // console.log('message.messageType: ', message.messageType);
       if (message.messageType === 'TEXT') {
         // console.log(`message: ` + message.text + `\nmemberId: ` + memberId);
         AddTextRemote(message.text, memberId);
+        let conversation = document.querySelector('.conversation');
+        if (conversation) setScroll(conversation.scrollHeight);
       }
     };
     const memberCount = (memberCount: number) => {
@@ -56,7 +59,7 @@ const useRTMChannel = (channel: RtmChannel) => {
     };
   }, [channel, getMembers]);
 
-  return { channelState };
+  return { channelState, scroll };
 };
 
 export default useRTMChannel;

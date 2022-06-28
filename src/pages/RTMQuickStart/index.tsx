@@ -1,5 +1,5 @@
 import AgoraRTM from 'agora-rtm-sdk';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useRTMChannel from '../../hooks/userRTMChannel';
 import useRTMClient from '../../hooks/useRTMClient';
 
@@ -29,11 +29,19 @@ const RTMQuickStart = () => {
   const [user, setUser] = useState('');
   const [config, setConfig] = useState({ uid: '', token: '' });
   const [isChannel, setIsChannel] = useState(false);
-
   const [msgInput, setMsgInput] = useState('');
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const { connectionState } = useRTMClient(client);
-  const { channelState } = useRTMChannel(channel);
+  const { channelState, scroll } = useRTMChannel(channel);
+
+  useEffect(() => {
+    if (!msgInput) scrollToBottom();
+
+    return () => {
+      scrollToBottom();
+    };
+  }, [msgInput, scroll]);
 
   useEffect(() => {
     if (connectionState.newState) {
@@ -129,6 +137,11 @@ const RTMQuickStart = () => {
     if (textArea) textArea.append(text);
   };
 
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  };
   return (
     <>
       {!auth ? (
@@ -178,7 +191,7 @@ const RTMQuickStart = () => {
                 <li>In channel: {channel.channelId}</li>
               </ul>
 
-              <div className='conversation'></div>
+              <div ref={scrollRef} className='conversation'></div>
 
               <form className='form-wrap' onSubmit={onSend}>
                 <input type='text' value={msgInput} onChange={(e) => setMsgInput(e.target.value)} />
