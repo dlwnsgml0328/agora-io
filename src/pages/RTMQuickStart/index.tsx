@@ -33,19 +33,17 @@ const RTMQuickStart = () => {
   const [msgInput, setMsgInput] = useState('');
 
   const { connectionState } = useRTMClient(client);
-  const { channelState, getMembers } = useRTMChannel(channel);
+  const { channelState } = useRTMChannel(channel);
 
   useEffect(() => {
-    if (connectionState.newState) console.log('@ connectionStateChanged', connectionState);
+    if (connectionState.newState) {
+      console.log('@ connectionStateChanged', connectionState);
+    }
   }, [connectionState]);
 
   useEffect(() => {
     if (channelState) console.log('@ channelState updated:', channelState);
   }, [channelState]);
-
-  useEffect(() => {
-    if (isChannel) getMembers().then((members) => console.log('members updated:', members));
-  }, [isChannel, getMembers]);
 
   const setCurrentUser = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser(e.target.value);

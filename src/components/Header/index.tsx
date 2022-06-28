@@ -18,10 +18,10 @@ const Header = () => {
           <Link to='/RTCQuickStart'>RTC quick start 🔥</Link>
         </li>
         <li>
-          <Link to='/RTMQuickStart'>RTM quick start 🔥</Link>
+          <Link to='/RTMQuickStart'>RTM quick start (channel) 🔥</Link>
         </li>
         <li>
-          <Link to='/RTMPeerToPeer'>RTM peer to peer 🔥</Link>
+          <Link to='/RTMPeerToPeer'>RTM peer to peer (1:1) 🔥</Link>
         </li>
       </ul>
     </S.Header>

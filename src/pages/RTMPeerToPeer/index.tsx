@@ -1,7 +1,7 @@
 import AgoraRTM from 'agora-rtm-sdk';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useRTMPeer from '../../hooks/useRTMPeer';
-import * as S from '../RTMQuickStart/index.styles';
+import * as S from './index.styles';
 
 const APP_ID = process.env.REACT_APP_RTM_ID;
 const client = AgoraRTM.createInstance(APP_ID);
@@ -23,6 +23,7 @@ const RTMPeerToPeer = () => {
   const [remote, setRemote] = useState('');
   const [onSave, setOnSave] = useState(false);
   const [msgInput, setMsgInput] = useState('');
+  const [canMessage, setCanMessage] = useState(false);
 
   const { connectionState } = useRTMPeer(client);
 
@@ -63,22 +64,14 @@ const RTMPeerToPeer = () => {
       return;
     }
 
-    console.log(`to ${remote}`);
     client
       .sendMessageToPeer({ text: msgInput }, remote)
-      .then((res) => {
-        if (res.hasPeerReceived) {
-          console.log('received');
-        } else {
-          console.log('error received');
-        }
-      })
       .then(() => {
         AddText(msgInput);
         setMsgInput('');
       })
       .catch((err) => {
-        console.log('error received', err);
+        console.error('error received', err);
       });
   };
 
@@ -92,8 +85,19 @@ const RTMPeerToPeer = () => {
     if (textArea) textArea.append(text);
   };
 
+  const checkRemoteUser = useCallback(
+    async (peersId: string[]) => {
+      await client.queryPeersOnlineStatus(peersId).then((response) => {
+        console.log('response', response, response[remote]); // {0328: false, 1796: true, 9170: false}
+        if (response[remote]) setCanMessage(true);
+      });
+      setOnSave(true);
+    },
+    [remote]
+  );
+
   return (
-    <>
+    <S.PeerToPeerWrap>
       {!auth ? (
         <div onChange={setCurrentUser}>
           <h3>Select User</h3>
@@ -119,27 +123,35 @@ const RTMPeerToPeer = () => {
           </button>
 
           <input
+            className='checkRemote'
             type='text'
             placeholder='상대방의 ID를 입력해주세요'
             disabled={onSave}
             value={remote}
             onChange={(e) => setRemote(e.target.value)}
           />
-          <button type='button' disabled={onSave} onClick={() => setOnSave(true)}>
-            저장
+          <button type='button' disabled={onSave} onClick={() => checkRemoteUser(Array(remote))}>
+            확인
           </button>
 
           <S.MessageWrap>
             <div className='conversation'></div>
 
             <form className='form-wrap' onSubmit={onSend}>
-              <input type='text' value={msgInput} onChange={(e) => setMsgInput(e.target.value)} />
-              <button type='submit'>전송</button>
+              <input
+                type='text'
+                value={msgInput}
+                onChange={(e) => setMsgInput(e.target.value)}
+                disabled={!canMessage}
+              />
+              <button type='submit' disabled={!canMessage}>
+                전송
+              </button>
             </form>
           </S.MessageWrap>
         </div>
       )}
-    </>
+    </S.PeerToPeerWrap>
   );
 };
 

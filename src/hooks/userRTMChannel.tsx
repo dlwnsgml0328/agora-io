@@ -1,5 +1,5 @@
 import { RtmChannel, RtmMessage } from 'agora-rtm-sdk';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface IChannelState {
   id: string;
@@ -9,10 +9,13 @@ interface IChannelState {
 const useRTMChannel = (channel: RtmChannel) => {
   const [channelState, setChannelState] = useState<IChannelState>({ id: '', msg: '' });
 
-  const getMembers = () =>
-    channel.getMembers().then((members: string[]) => {
-      return members;
-    });
+  const getMembers = useCallback(
+    () =>
+      channel.getMembers().then((members: string[]) => {
+        return members;
+      }),
+    [channel]
+  );
 
   const AddTextRemote = (message: string, memberId?: string) => {
     const textArea = document.querySelector('.conversation');
@@ -35,7 +38,10 @@ const useRTMChannel = (channel: RtmChannel) => {
         AddTextRemote(message.text, memberId);
       }
     };
-    const memberCount = (memberCount: number) => console.log(`memberCount updated: ${memberCount}`);
+    const memberCount = (memberCount: number) => {
+      console.log(`memberCount updated: ${memberCount}`);
+      getMembers().then((members) => console.log('members updated: ', members));
+    };
 
     channel.on('MemberJoined', memberJoined);
     channel.on('MemberLeft', memberLeft);
@@ -46,10 +52,11 @@ const useRTMChannel = (channel: RtmChannel) => {
       channel.off('MemberJoined', memberJoined);
       channel.off('MemberLeft', memberLeft);
       channel.off('ChannelMessage', channelMessage);
+      channel.off('MemberCountUpdated', memberCount);
     };
-  }, [channel]);
+  }, [channel, getMembers]);
 
-  return { channelState, getMembers };
+  return { channelState };
 };
 
 export default useRTMChannel;
