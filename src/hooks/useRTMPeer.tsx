@@ -6,7 +6,7 @@ interface ReceivedMessageProperties {
   isOfflineMessage: boolean;
 }
 
-const useRTMClient = (client: RtmClient | undefined) => {
+const useRTMPeer = (client: RtmClient | undefined) => {
   const [connectionState, setConnectionState] = useState({ newState: '', reason: '' });
 
   useEffect(() => {
@@ -21,6 +21,7 @@ const useRTMClient = (client: RtmClient | undefined) => {
       }
       setConnectionState({ newState: newState, reason: reason });
     };
+
     const messageFromPeer = (
       message: RtmMessage,
       peerId: string,
@@ -32,7 +33,18 @@ const useRTMClient = (client: RtmClient | undefined) => {
             (messageProps.serverReceivedTs, messageProps.isOfflineMessage)
           }`
         );
+        AddTextRemote(message.text, peerId);
       }
+    };
+
+    const AddTextRemote = (message: string, memberId?: string) => {
+      const textArea = document.querySelector('.conversation');
+
+      const text = document.createElement('div');
+      text.className = 'remote';
+      text.innerHTML = `<span class="uid">🌞</span><span class="msg">${message}</span>`;
+
+      if (textArea) textArea.append(text);
     };
 
     client.on('ConnectionStateChanged', connectionStateChanged);
@@ -47,4 +59,4 @@ const useRTMClient = (client: RtmClient | undefined) => {
   return { connectionState };
 };
 
-export default useRTMClient;
+export default useRTMPeer;

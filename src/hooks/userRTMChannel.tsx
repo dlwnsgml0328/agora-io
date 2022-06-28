@@ -14,7 +14,7 @@ const useRTMChannel = (channel: RtmChannel) => {
       return members;
     });
 
-  const AddTextRemote = (message: string, memberId: string) => {
+  const AddTextRemote = (message: string, memberId?: string) => {
     const textArea = document.querySelector('.conversation');
 
     const text = document.createElement('div');

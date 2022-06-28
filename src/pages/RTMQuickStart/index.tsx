@@ -58,7 +58,7 @@ const RTMQuickStart = () => {
     }
   };
 
-  const onSubmit = async () => {
+  const onLogin = async () => {
     await client
       .login(config)
       .then(() => console.log('@ login successfully'))
@@ -150,7 +150,7 @@ const RTMQuickStart = () => {
             <span>C</span>
           </label>
 
-          <button disabled={!user} type='button' onClick={onSubmit}>
+          <button disabled={!user} type='button' onClick={onLogin}>
             로그인
           </button>
         </div>

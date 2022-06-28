@@ -9,9 +9,6 @@ const Header = () => {
           <Link to='/'>Home</Link>
         </li>
         <li>
-          <Link to='/JoinAndLeave'>Join And Leave</Link>
-        </li>
-        <li>
           <Link to='/CreateRemoteTracks-v2'>Create Remote Tracks V2 🔥</Link>
         </li>
         <li>
@@ -22,6 +19,9 @@ const Header = () => {
         </li>
         <li>
           <Link to='/RTMQuickStart'>RTM quick start 🔥</Link>
+        </li>
+        <li>
+          <Link to='/RTMPeerToPeer'>RTM peer to peer 🔥</Link>
         </li>
       </ul>
     </S.Header>
