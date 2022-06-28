@@ -1,5 +1,5 @@
 import AgoraRTM, { LocalInvitation, RtmStatusCode } from 'agora-rtm-sdk';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useRTMClient from '../../hooks/useRTMClient';
 import * as S from './index.styles';
 
@@ -21,35 +21,31 @@ const RTMCallInvitation = () => {
   const [user, setUser] = useState('');
   const [config, setConfig] = useState({ uid: '', token: '' });
   const [localInvitation, setLocalInvitation] = useState<LocalInvitation>();
-  const [response, setResponse] = useState({ state: '', response: '' });
+  const [localResponse, setLocalResponse] = useState({ state: '', response: '' });
 
-  const { receivedInvitation } = useRTMClient(client);
-
-  useEffect(() => {
-    if (receivedInvitation) console.log('receivedInvitation: ', receivedInvitation);
-  }, [receivedInvitation]);
+  const { onModal, setOnModal, remoteInvitation } = useRTMClient(client);
 
   useEffect(() => {
-    if (response.state) console.log('localInvitation updated:', response);
-  }, [response]);
+    if (localResponse.state) console.log('localInvitation updated:', localResponse);
+  }, [localResponse]);
 
   useEffect(() => {
     if (!localInvitation) return;
 
     const localInvitationReceivedByPeer = () => {
-      setResponse({ state: 'localInvitationReceivedByPeer', response: '' });
+      setLocalResponse({ state: 'localInvitationReceivedByPeer', response: '' });
     };
     const localInvitationAccepted = (response: string) => {
-      setResponse({ state: 'localInvitationAccepted', response: response });
+      setLocalResponse({ state: 'localInvitationAccepted', response: response });
     };
     const localInvitationRefused = (response: string) => {
-      setResponse({ state: 'localInvitationAccepted', response: response });
+      setLocalResponse({ state: 'localInvitationRefused', response: response });
     };
     const localInvitationFailure = (response: RtmStatusCode.LocalInvitationFailureReason) => {
-      setResponse({ state: 'localInvitationFailure', response: response });
+      setLocalResponse({ state: 'localInvitationFailure', response: response });
     };
     const localInvitationCanceled = () => {
-      setResponse({ state: 'localInvitationCanceled', response: '' });
+      setLocalResponse({ state: 'localInvitationCanceled', response: '' });
     };
 
     localInvitation.on('LocalInvitationReceivedByPeer', localInvitationReceivedByPeer);
@@ -66,6 +62,32 @@ const RTMCallInvitation = () => {
       localInvitation.off('LocalInvitationCanceled', localInvitationCanceled);
     };
   }, [localInvitation]);
+
+  useEffect(() => {
+    if (!remoteInvitation) return;
+
+    const remoteInvitationCanceled = (content: string) => {
+      console.log('@ RemoteInvitationCanceled 🔥', content);
+    };
+
+    const remoteInvitationFailure = (reason: RtmStatusCode.RemoteInvitationFailureReason) => {
+      console.log('@ RemoteInvitationFailure 🔥', reason);
+    };
+
+    const remoteInvitationRefused = () => {
+      console.log('@ RemoteInvitationRefused 🔥');
+    };
+
+    remoteInvitation.on('RemoteInvitationCanceled', remoteInvitationCanceled);
+    remoteInvitation.on('RemoteInvitationFailure', remoteInvitationFailure);
+    remoteInvitation.on('RemoteInvitationRefused', remoteInvitationRefused);
+
+    return () => {
+      remoteInvitation.off('RemoteInvitationCanceled', remoteInvitationCanceled);
+      remoteInvitation.off('RemoteInvitationFailure', remoteInvitationFailure);
+      remoteInvitation.off('RemoteInvitationRefused', remoteInvitationRefused);
+    };
+  }, [remoteInvitation, setOnModal]);
 
   const setCurrentUser = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser(e.target.value);
@@ -100,6 +122,16 @@ const RTMCallInvitation = () => {
     localInvitation.send();
   };
 
+  const acceptInvitation = useCallback(() => {
+    remoteInvitation?.accept();
+    setOnModal(false);
+  }, [remoteInvitation, setOnModal]);
+
+  const refuseInvitation = useCallback(() => {
+    remoteInvitation?.refuse();
+    setOnModal(false);
+  }, [remoteInvitation, setOnModal]);
+
   return (
     <S.CallInvitationWrap>
       {!auth ? (
@@ -120,16 +152,46 @@ const RTMCallInvitation = () => {
           </button>
         </div>
       ) : (
-        <div>
-          <h3>Hello, {config.uid}</h3>
-          <button type='button' onClick={onLogOut}>
-            로그아웃
-          </button>
-          <input type='text' value={config.uid === USER_A.uid ? USER_B.uid : USER_A.uid} disabled />
-          <button type='button' onClick={onInvite}>
-            초대하기
-          </button>
-        </div>
+        <>
+          <div>
+            <h3>Hello, {config.uid}</h3>
+            <button type='button' onClick={onLogOut}>
+              로그아웃
+            </button>
+            <input
+              type='text'
+              value={config.uid === USER_A.uid ? USER_B.uid : USER_A.uid}
+              disabled
+            />
+            <button type='button' onClick={onInvite}>
+              초대하기
+            </button>
+          </div>
+
+          {onModal && (
+            <S.InvitationModalWrap>
+              <div className='modal'>
+                <span className='exit' onClick={() => refuseInvitation()}>
+                  X
+                </span>
+                <h3>Modal 있음</h3>
+
+                <p>초대한 인원: {remoteInvitation!.callerId}</p>
+                <p>초대한 채널: {remoteInvitation?.channelId || '없음'}</p>
+                <p>컨텐츠: {remoteInvitation?.content || '없음'}</p>
+
+                <div className='button-group'>
+                  <button type='button' onClick={acceptInvitation}>
+                    수락
+                  </button>
+                  <button type='button' onClick={refuseInvitation}>
+                    거절
+                  </button>
+                </div>
+              </div>
+            </S.InvitationModalWrap>
+          )}
+        </>
       )}
     </S.CallInvitationWrap>
   );

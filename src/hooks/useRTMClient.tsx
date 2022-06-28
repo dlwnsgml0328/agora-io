@@ -8,7 +8,8 @@ interface ReceivedMessageProperties {
 
 const useRTMClient = (client: RtmClient | undefined) => {
   const [connectionState, setConnectionState] = useState({ newState: '', reason: '' });
-  const [receivedInvitation, setReceivedInvitation] = useState<RemoteInvitation>();
+  const [remoteInvitation, setRemoteInvitation] = useState<RemoteInvitation>();
+  const [onModal, setOnModal] = useState(false);
 
   useEffect(() => {
     if (!client) return;
@@ -38,7 +39,9 @@ const useRTMClient = (client: RtmClient | undefined) => {
     };
 
     const remoteInvitationReceived = (remoteInvitation: RemoteInvitation) => {
-      setReceivedInvitation(remoteInvitation);
+      console.log(`remoteInvitationReceived:`, remoteInvitation);
+      setRemoteInvitation(remoteInvitation);
+      setOnModal(true);
     };
 
     client.on('ConnectionStateChanged', connectionStateChanged);
@@ -52,7 +55,7 @@ const useRTMClient = (client: RtmClient | undefined) => {
     };
   }, [client]);
 
-  return { connectionState, receivedInvitation };
+  return { connectionState, remoteInvitation, onModal, setOnModal };
 };
 
 export default useRTMClient;
