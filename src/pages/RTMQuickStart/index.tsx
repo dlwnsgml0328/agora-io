@@ -1,5 +1,5 @@
 import AgoraRTM from 'agora-rtm-sdk';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useRTMChannel from '../../hooks/userRTMChannel';
 import useRTMClient from '../../hooks/useRTMClient';
 
@@ -19,6 +19,11 @@ const USER_B = {
   token: process.env.REACT_APP_USER_B,
 };
 
+const USER_C = {
+  uid: '9170',
+  token: process.env.REACT_APP_USER_C,
+};
+
 const RTMQuickStart = () => {
   const [auth, setAuth] = useState(false);
   const [user, setUser] = useState('');
@@ -28,7 +33,7 @@ const RTMQuickStart = () => {
   const [msgInput, setMsgInput] = useState('');
 
   const { connectionState } = useRTMClient(client);
-  const { channelState } = useRTMChannel(channel);
+  const { channelState, getMembers } = useRTMChannel(channel);
 
   useEffect(() => {
     if (connectionState.newState) console.log('@ connectionStateChanged', connectionState);
@@ -38,12 +43,18 @@ const RTMQuickStart = () => {
     if (channelState) console.log('@ channelState updated:', channelState);
   }, [channelState]);
 
+  useEffect(() => {
+    if (isChannel) getMembers().then((members) => console.log('members updated:', members));
+  }, [isChannel, getMembers]);
+
   const setCurrentUser = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser(e.target.value);
     if (e.target.value === 'A') {
       setConfig(USER_A);
-    } else {
+    } else if (e.target.value === 'B') {
       setConfig(USER_B);
+    } else {
+      setConfig(USER_C);
     }
   };
 
@@ -56,6 +67,11 @@ const RTMQuickStart = () => {
   };
 
   const onLogOut = async () => {
+    if (channel && isChannel)
+      await channel
+        .leave()
+        .then(() => setIsChannel(false))
+        .catch((err) => console.error('error occurred in leave callback', err));
     await client
       .logout()
       .then(() => console.log('@ logout completed'))
@@ -128,6 +144,10 @@ const RTMQuickStart = () => {
           <label>
             <input type='radio' name='user' value='B' />
             <span>B</span>
+          </label>
+          <label>
+            <input type='radio' name='user' value='C' />
+            <span>C</span>
           </label>
 
           <button disabled={!user} type='button' onClick={onSubmit}>

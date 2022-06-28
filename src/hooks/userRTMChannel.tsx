@@ -9,6 +9,11 @@ interface IChannelState {
 const useRTMChannel = (channel: RtmChannel) => {
   const [channelState, setChannelState] = useState<IChannelState>({ id: '', msg: '' });
 
+  const getMembers = () =>
+    channel.getMembers().then((members: string[]) => {
+      return members;
+    });
+
   const AddTextRemote = (message: string, memberId: string) => {
     const textArea = document.querySelector('.conversation');
 
@@ -30,10 +35,12 @@ const useRTMChannel = (channel: RtmChannel) => {
         AddTextRemote(message.text, memberId);
       }
     };
+    const memberCount = (memberCount: number) => console.log(`memberCount updated: ${memberCount}`);
 
     channel.on('MemberJoined', memberJoined);
     channel.on('MemberLeft', memberLeft);
     channel.on('ChannelMessage', channelMessage);
+    channel.on('MemberCountUpdated', memberCount);
 
     return () => {
       channel.off('MemberJoined', memberJoined);
@@ -42,7 +49,7 @@ const useRTMChannel = (channel: RtmChannel) => {
     };
   }, [channel]);
 
-  return { channelState };
+  return { channelState, getMembers };
 };
 
 export default useRTMChannel;
