@@ -1,4 +1,4 @@
-import { RtmClient, RtmMessage, RtmStatusCode } from 'agora-rtm-sdk';
+import { RemoteInvitation, RtmClient, RtmMessage, RtmStatusCode } from 'agora-rtm-sdk';
 import { useEffect, useState } from 'react';
 
 interface ReceivedMessageProperties {
@@ -8,6 +8,7 @@ interface ReceivedMessageProperties {
 
 const useRTMClient = (client: RtmClient | undefined) => {
   const [connectionState, setConnectionState] = useState({ newState: '', reason: '' });
+  const [receivedInvitation, setReceivedInvitation] = useState<RemoteInvitation>();
 
   useEffect(() => {
     if (!client) return;
@@ -36,16 +37,22 @@ const useRTMClient = (client: RtmClient | undefined) => {
       }
     };
 
+    const remoteInvitationReceived = (remoteInvitation: RemoteInvitation) => {
+      setReceivedInvitation(remoteInvitation);
+    };
+
     client.on('ConnectionStateChanged', connectionStateChanged);
     client.on('MessageFromPeer', messageFromPeer);
+    client.on('RemoteInvitationReceived', remoteInvitationReceived);
 
     return () => {
       client.off('ConnectionStateChanged', connectionStateChanged);
       client.off('MessageFromPeer', messageFromPeer);
+      client.off('RemoteInvitationReceived', remoteInvitationReceived);
     };
   }, [client]);
 
-  return { connectionState };
+  return { connectionState, receivedInvitation };
 };
 
 export default useRTMClient;

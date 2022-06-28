@@ -17,6 +17,7 @@ import AgoraReactUIKit from './pages/AgoraReactUIKit';
 import RTCQuickStart from './pages/RTCQuickStart';
 import RTMQuickStart from './pages/RTMQuickStart';
 import RTMPeerToPeer from './pages/RTMPeerToPeer';
+import RTMCallInvitation from './pages/RTMCallInvitation';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
         <Route path='/RTCQuickStart' element={<RTCQuickStart />} />
         <Route path='/RTMQuickStart' element={<RTMQuickStart />} />
         <Route path='/RTMPeerToPeer' element={<RTMPeerToPeer />} />
+        <Route path='/RTMCallInvitation' element={<RTMCallInvitation />} />
 
         <Route path='*' element={<NotFound />} />
       </Routes>

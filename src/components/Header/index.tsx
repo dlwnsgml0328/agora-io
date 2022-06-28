@@ -23,6 +23,9 @@ const Header = () => {
         <li>
           <Link to='/RTMPeerToPeer'>RTM peer to peer (1:1) 🔥</Link>
         </li>
+        <li>
+          <Link to='/RTMCallInvitation'>RTM call invitation 🤙🏼</Link>
+        </li>
       </ul>
     </S.Header>
   );
