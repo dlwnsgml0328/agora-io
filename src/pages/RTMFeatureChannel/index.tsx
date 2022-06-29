@@ -1,4 +1,4 @@
-import AgoraRTM from 'agora-rtm-sdk';
+import AgoraRTM, { LocalInvitation, RtmStatusCode } from 'agora-rtm-sdk';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import useRTMChannel from '../../hooks/userRTMChannel';
 import useRTMClient from '../../hooks/useRTMClient';
@@ -35,19 +35,84 @@ const RTMFeatureChannel = () => {
   const [isChannel, setIsChannel] = useState(false);
   const [msgInput, setMsgInput] = useState('');
 
+  // 유저 검색 기능 구현
   const [inviteModal, setInviteModal] = useState(false);
 
   const [searchUser, setSearchUser] = useState('');
   const [resultUserList, setResultUserList] = useState<IresultUserList[]>([]);
 
+  // 초대 로직 구현
+  const [localInvitation, setLocalInvitation] = useState<LocalInvitation>();
+  const [localResponse, setLocalResponse] = useState({ state: '', response: '' });
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { connectionState } = useRTMClient(client);
+  const { connectionState, remoteInvitation } = useRTMClient(client);
   const { channelState, scroll, memberList } = useRTMChannel(channel);
 
   useEffect(() => {
-    console.log('@ resultUserList 🔥:', resultUserList);
-  }, [resultUserList]);
+    if (localResponse.state) console.log('localInvitation updated:', localResponse);
+  }, [localResponse]);
+
+  useEffect(() => {
+    if (!localInvitation) return;
+
+    const localInvitationReceivedByPeer = () => {
+      setLocalResponse({ state: 'localInvitationReceivedByPeer', response: '' });
+    };
+    const localInvitationAccepted = (response: string) => {
+      setLocalResponse({ state: 'localInvitationAccepted', response: response });
+    };
+    const localInvitationRefused = (response: string) => {
+      setLocalResponse({ state: 'localInvitationRefused', response: response });
+    };
+    const localInvitationFailure = (response: RtmStatusCode.LocalInvitationFailureReason) => {
+      setLocalResponse({ state: 'localInvitationFailure', response: response });
+    };
+    const localInvitationCanceled = () => {
+      setLocalResponse({ state: 'localInvitationCanceled', response: '' });
+    };
+
+    localInvitation.on('LocalInvitationReceivedByPeer', localInvitationReceivedByPeer);
+    localInvitation.on('LocalInvitationAccepted', localInvitationAccepted);
+    localInvitation.on('LocalInvitationRefused', localInvitationRefused);
+    localInvitation.on('LocalInvitationFailure', localInvitationFailure);
+    localInvitation.on('LocalInvitationCanceled', localInvitationCanceled);
+
+    return () => {
+      localInvitation.off('LocalInvitationReceivedByPeer', localInvitationReceivedByPeer);
+      localInvitation.off('LocalInvitationAccepted', localInvitationAccepted);
+      localInvitation.off('LocalInvitationRefused', localInvitationRefused);
+      localInvitation.off('LocalInvitationFailure', localInvitationFailure);
+      localInvitation.off('LocalInvitationCanceled', localInvitationCanceled);
+    };
+  }, [localInvitation]);
+
+  useEffect(() => {
+    if (!remoteInvitation) return;
+
+    const remoteInvitationCanceled = (content: string) => {
+      console.log('@ RemoteInvitationCanceled 🔥', content);
+    };
+
+    const remoteInvitationFailure = (reason: RtmStatusCode.RemoteInvitationFailureReason) => {
+      console.log('@ RemoteInvitationFailure 🔥', reason);
+    };
+
+    const remoteInvitationRefused = () => {
+      console.log('@ RemoteInvitationRefused 🔥');
+    };
+
+    remoteInvitation.on('RemoteInvitationCanceled', remoteInvitationCanceled);
+    remoteInvitation.on('RemoteInvitationFailure', remoteInvitationFailure);
+    remoteInvitation.on('RemoteInvitationRefused', remoteInvitationRefused);
+
+    return () => {
+      remoteInvitation.off('RemoteInvitationCanceled', remoteInvitationCanceled);
+      remoteInvitation.off('RemoteInvitationFailure', remoteInvitationFailure);
+      remoteInvitation.off('RemoteInvitationRefused', remoteInvitationRefused);
+    };
+  }, [remoteInvitation]);
 
   useEffect(() => {
     if (connectionState.newState) {
@@ -198,6 +263,16 @@ const RTMFeatureChannel = () => {
     setResultUserList([]);
   };
 
+  // 초대 로직 구현
+  const onInvite = (calleeId: string) => {
+    const localInvitation = client.createLocalInvitation(calleeId);
+    // TODO: invitation을 만들 때, 채널 id 와 같은 정보가 어떻게 삽입되는지 알아야 한다
+    setLocalInvitation(localInvitation);
+    localInvitation.channelId = 'test_eazel';
+    localInvitation.content = 'welcome eazel test channel';
+    localInvitation.send();
+  };
+
   return (
     <div>
       {!auth ? (
@@ -291,7 +366,11 @@ const RTMFeatureChannel = () => {
                     {resultUserList.map((user, idx) => (
                       <li key={idx}>
                         <span>{user.id}</span>
-                        <button disabled={!user.canInvite} type='button'>
+                        <button
+                          disabled={!user.canInvite}
+                          type='button'
+                          onClick={() => onInvite(user.id)}
+                        >
                           초대
                         </button>
                       </li>
