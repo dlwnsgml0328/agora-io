@@ -1,7 +1,13 @@
 import AgoraRTM, { LocalInvitation, RtmStatusCode } from 'agora-rtm-sdk';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import ChooseForm from '../../components/ChooseForm';
+import MessageForm from '../../components/MessageForm';
+import InvitationModal from '../../components/Modals/InvitationModal';
+import UserListInviteModal from '../../components/Modals/UserListInviteModal';
+import UserList from '../../components/UserList';
 import useRTMChannel from '../../hooks/userRTMChannel';
 import useRTMClient from '../../hooks/useRTMClient';
+
 import * as S from './index.styles';
 
 const APP_ID = process.env.REACT_APP_RTM_ID;
@@ -23,7 +29,7 @@ const USER_C = {
   token: process.env.REACT_APP_USER_C,
 };
 
-interface IresultUserList {
+export interface IresultUserList {
   id: string;
   canInvite: boolean;
 }
@@ -255,7 +261,6 @@ const RTMFeatureChannel = () => {
 
   const checkSearchUser = useCallback(
     async (peerIds: string[]) => {
-      // 현재 온라인 상태를 검색할 때, 배열로 검색하는 메서드만 제공되고 있음
       let peer = peerIds[0];
 
       if (isPeer(resultUserList, peer)) {
@@ -334,26 +339,7 @@ const RTMFeatureChannel = () => {
   return (
     <div>
       {!auth ? (
-        <div onChange={setCurrentUser}>
-          <h3>Select User</h3>
-
-          <label>
-            <input type='radio' name='user' value='A' />
-            <span>A</span>
-          </label>
-          <label>
-            <input type='radio' name='user' value='B' />
-            <span>B</span>
-          </label>
-          <label>
-            <input type='radio' name='user' value='C' />
-            <span>C</span>
-          </label>
-
-          <button disabled={!user} type='button' onClick={onLogin}>
-            로그인
-          </button>
-        </div>
+        <ChooseForm onLogin={onLogin} setCurrentUser={setCurrentUser} user={user} />
       ) : (
         <div>
           <h3>Hello, {config.uid}</h3>
@@ -373,103 +359,34 @@ const RTMFeatureChannel = () => {
 
           {isChannel && (
             <S.ChannelWrap>
-              <div className='message-wrap'>
-                <p>
-                  <span>In channel: {channel.channelId}</span>
-                </p>
+              <MessageForm
+                channelId={channel.channelId}
+                msgInput={msgInput}
+                onSend={onSend}
+                scrollRef={scrollRef}
+                setMsgInput={setMsgInput}
+              />
 
-                <div ref={scrollRef} className='conversation'></div>
-
-                <form className='form-wrap' onSubmit={onSend}>
-                  <input
-                    type='text'
-                    value={msgInput}
-                    onChange={(e) => setMsgInput(e.target.value)}
-                  />
-                  <button type='submit'>전송</button>
-                </form>
-              </div>
-
-              <div className='channel-user-wrap'>
-                <p>
-                  <span>user list</span>
-
-                  <button type='button' className='invite' onClick={() => setInviteModal(true)}>
-                    ⚙️
-                  </button>
-                </p>
-                <ul>
-                  {memberList.map((member, idx) => (
-                    <li key={idx}>
-                      <span className={member === config.uid ? 'you' : undefined}>
-                        {member} {member === config.uid ? '🧑🏻‍💻' : '👩🏻‍💻'}
-                      </span>
-                      <span className='online'></span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <UserList config={config} memberList={memberList} setInviteModal={setInviteModal} />
 
               {inviteModal && (
-                <div className='invite-modal-wrap'>
-                  <p>
-                    <span className='title'>invite user</span>
-
-                    <span className='exit' onClick={() => exitModal()}>
-                      X
-                    </span>
-                  </p>
-
-                  <ul>
-                    {resultUserList.map((user, idx) => (
-                      <li key={idx}>
-                        <span>{user.id}</span>
-                        <button
-                          disabled={!user.canInvite}
-                          type='button'
-                          onClick={() => onInvite(user.id)}
-                        >
-                          초대
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <form className='search-wrap' onSubmit={onSubmitSearch}>
-                    <input
-                      type='text'
-                      value={searchUser}
-                      placeholder='ex) 0328'
-                      onChange={(e) => setSearchUser(e.target.value)}
-                    />
-                    <button type='submit'>검색</button>
-                  </form>
-                </div>
+                <UserListInviteModal
+                  exitModal={exitModal}
+                  onInvite={onInvite}
+                  onSubmitSearch={onSubmitSearch}
+                  resultUserList={resultUserList}
+                  searchUser={searchUser}
+                  setSearchUser={setSearchUser}
+                />
               )}
             </S.ChannelWrap>
           )}
           {onModal && (
-            <S.InvitationModalWrap>
-              <div className='modal'>
-                <span className='exit' onClick={() => refuseInvitation()}>
-                  X
-                </span>
-                <h3>Invitation</h3>
-
-                <p>초대한 인원: {remoteInvitation!.callerId}</p>
-                <p>초대한 채널: {remoteInvitation?.channelId || '없음'}</p>
-                <p>컨텐츠: {remoteInvitation?.content || '없음'}</p>
-
-                <div className='button-group'>
-                  <button type='button' onClick={acceptInvitation}>
-                    수락
-                  </button>
-                  <button type='button' onClick={refuseInvitation}>
-                    거절
-                  </button>
-                </div>
-              </div>
-            </S.InvitationModalWrap>
+            <InvitationModal
+              acceptInvitation={acceptInvitation}
+              refuseInvitation={refuseInvitation}
+              remoteInvitation={remoteInvitation}
+            />
           )}
         </div>
       )}
