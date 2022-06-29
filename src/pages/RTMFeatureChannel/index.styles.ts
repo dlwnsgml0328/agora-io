@@ -3,21 +3,23 @@ import styled from 'styled-components';
 export const ChannelWrap = styled.div`
   display: flex;
   margin-top: 20px;
+  height: 70vh;
 
   .message-wrap {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 
     min-width: 200px;
     width: 80%;
-    height: 50vh;
+    height: 100%;
     padding: 20px;
 
-    background-color: #004ec7;
+    background-color: #0066ff;
 
     p {
       margin: 0;
+      height: 32px;
+      line-height: 32px;
 
       span {
         color: #fff;
@@ -35,7 +37,7 @@ export const ChannelWrap = styled.div`
 
     .conversation {
       overflow-y: auto;
-      height: 45vh;
+      height: 90%;
       background-color: #fff;
 
       .local,
@@ -110,9 +112,9 @@ export const ChannelWrap = styled.div`
 
   .channel-user-wrap {
     width: 20%;
-    height: 50vh;
+    height: 100%;
     padding: 20px;
-    background: #525252;
+    background: #003dcb;
 
     p {
       margin: 0;
@@ -127,7 +129,7 @@ export const ChannelWrap = styled.div`
     ul {
       margin: 0;
       border: 1px solid black;
-      height: 45vh;
+      height: 90%;
       padding-left: 0;
       overflow: auto;
       background: #fff;
@@ -167,14 +169,17 @@ export const ChannelWrap = styled.div`
     position: absolute;
     right: 0;
     width: 20%;
-    height: 50vh;
+    height: 70vh;
     padding: 20px;
-    background: orange;
+    background: #6b93ff;
+    color: #000;
 
     p {
       display: flex;
       justify-content: space-between;
       margin: 0;
+      height: 32px;
+      line-height: 32px;
     }
     .title {
       width: 90px;
@@ -190,7 +195,7 @@ export const ChannelWrap = styled.div`
     ul {
       margin: 0;
       border: 1px solid black;
-      height: 45vh;
+      height: 90%;
       padding-left: 0;
       overflow: auto;
       background: #fff;
@@ -226,6 +231,57 @@ export const ChannelWrap = styled.div`
     }
     .invite-modal-wrap {
       background-color: #525252;
+    }
+  }
+`;
+
+export const InvitationModalWrap = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #004ec7;
+
+  .modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 20px;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
+
+    padding: 20px 40px;
+    background-color: #fff;
+
+    h3 {
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .exit {
+      position: absolute;
+      right: 20px;
+
+      cursor: pointer;
+    }
+
+    .button-group {
+      display: flex;
+      width: 100%;
+      justify-content: space-around;
+      align-items: center;
+
+      button {
+        width: 30%;
+        background-color: #004ec7;
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        padding: 10px 0;
+
+        cursor: pointer;
+      }
     }
   }
 `;

@@ -47,8 +47,28 @@ const RTMFeatureChannel = () => {
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { connectionState, remoteInvitation } = useRTMClient(client);
+  const { connectionState, onModal, setOnModal, remoteInvitation } = useRTMClient(client);
   const { channelState, scroll, memberList } = useRTMChannel(channel);
+
+  // 초대를 통해 join 한 멤버의 상태값을 업데이트 해주는 훅 함수
+  useEffect(() => {
+    if (resultUserList.length === 0) return;
+
+    if (channelState.msg !== 'memberJoined') return;
+
+    if (
+      resultUserList.some((user) => user.id === channelState.id) &&
+      resultUserList.find((user) => user.id === channelState.id)?.canInvite === true
+    ) {
+      let states = [...resultUserList];
+
+      states.find((user) => user.id === channelState.id)!.canInvite = !states.find(
+        (user) => user.id === channelState.id
+      )!.canInvite;
+
+      setResultUserList(states);
+    }
+  }, [resultUserList, channelState, memberList]);
 
   useEffect(() => {
     if (localResponse.state) console.log('localInvitation updated:', localResponse);
@@ -117,8 +137,21 @@ const RTMFeatureChannel = () => {
   useEffect(() => {
     if (connectionState.newState) {
       console.log('@ connectionStateChanged', connectionState);
+
+      if (connectionState.newState === 'ABORTED') {
+        if (channel && isChannel)
+          channel
+            .leave()
+            .then(() => setIsChannel(false))
+            .catch((err) => console.error('error occurred in leave callback', err));
+        client
+          .logout()
+          .then(() => console.log('@ logout completed'))
+          .then(() => setAuth(false))
+          .catch((err) => console.error('error occurred in logout callback', err));
+      }
     }
-  }, [connectionState]);
+  }, [connectionState, isChannel]);
 
   useEffect(() => {
     if (channelState) console.log('@ channelState updated:', channelState);
@@ -235,12 +268,18 @@ const RTMFeatureChannel = () => {
       await client.queryPeersOnlineStatus(peerIds).then((response) => {
         // console.log('response', response, response[searchUser]); // {0328: false, 1796: true, 9170: false}
 
-        setSearchUser('');
+        if (peer === config.uid) {
+          setResultUserList((prevArr) => [...prevArr, { id: peer, canInvite: false }]);
+        } else if (memberList.some((user) => user === peer)) {
+          setResultUserList((prevArr) => [...prevArr, { id: peer, canInvite: false }]);
+        } else {
+          setResultUserList((prevArr) => [...prevArr, { id: peer, canInvite: response[peer] }]);
+        }
 
-        setResultUserList((prevArr) => [...prevArr, { id: peer, canInvite: response[peer] }]);
+        setSearchUser('');
       });
     },
-    [resultUserList]
+    [resultUserList, config, memberList]
   );
 
   const onSubmitSearch = useCallback(
@@ -272,6 +311,25 @@ const RTMFeatureChannel = () => {
     localInvitation.content = 'welcome eazel test channel';
     localInvitation.send();
   };
+
+  const acceptInvitation = useCallback(async () => {
+    remoteInvitation?.accept();
+
+    await channel
+      .join()
+      .then(() => {
+        setIsChannel(true);
+        setOnModal(false);
+      })
+      .catch((err) => {
+        console.error('error occurred in join channel', err);
+      });
+  }, [remoteInvitation, setOnModal]);
+
+  const refuseInvitation = useCallback(() => {
+    remoteInvitation?.refuse();
+    setOnModal(false);
+  }, [remoteInvitation, setOnModal]);
 
   return (
     <div>
@@ -389,6 +447,29 @@ const RTMFeatureChannel = () => {
                 </div>
               )}
             </S.ChannelWrap>
+          )}
+          {onModal && (
+            <S.InvitationModalWrap>
+              <div className='modal'>
+                <span className='exit' onClick={() => refuseInvitation()}>
+                  X
+                </span>
+                <h3>Invitation</h3>
+
+                <p>초대한 인원: {remoteInvitation!.callerId}</p>
+                <p>초대한 채널: {remoteInvitation?.channelId || '없음'}</p>
+                <p>컨텐츠: {remoteInvitation?.content || '없음'}</p>
+
+                <div className='button-group'>
+                  <button type='button' onClick={acceptInvitation}>
+                    수락
+                  </button>
+                  <button type='button' onClick={refuseInvitation}>
+                    거절
+                  </button>
+                </div>
+              </div>
+            </S.InvitationModalWrap>
           )}
         </div>
       )}
