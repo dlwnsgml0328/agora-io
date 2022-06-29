@@ -18,6 +18,7 @@ import RTCQuickStart from './pages/RTCQuickStart';
 import RTMQuickStart from './pages/RTMQuickStart';
 import RTMPeerToPeer from './pages/RTMPeerToPeer';
 import RTMCallInvitation from './pages/RTMCallInvitation';
+import RTMFeatureChannel from './pages/RTMFeatureChannel';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
         <Route path='/RTMQuickStart' element={<RTMQuickStart />} />
         <Route path='/RTMPeerToPeer' element={<RTMPeerToPeer />} />
         <Route path='/RTMCallInvitation' element={<RTMCallInvitation />} />
+        <Route path='/RTMFeatureChannel' element={<RTMFeatureChannel />} />
 
         <Route path='*' element={<NotFound />} />
       </Routes>

@@ -9,6 +9,7 @@ interface IChannelState {
 const useRTMChannel = (channel: RtmChannel) => {
   const [channelState, setChannelState] = useState<IChannelState>({ id: '', msg: '' });
   const [scroll, setScroll] = useState(0);
+  const [memberList, setMemberList] = useState<string[]>([]);
 
   const getMembers = useCallback(
     () =>
@@ -43,7 +44,10 @@ const useRTMChannel = (channel: RtmChannel) => {
     };
     const memberCount = (memberCount: number) => {
       console.log(`memberCount updated: ${memberCount}`);
-      getMembers().then((members) => console.log('members updated: ', members));
+      getMembers().then((members) => {
+        setMemberList(members);
+        console.log('members updated: ', members);
+      });
     };
 
     channel.on('MemberJoined', memberJoined);
@@ -59,7 +63,7 @@ const useRTMChannel = (channel: RtmChannel) => {
     };
   }, [channel, getMembers]);
 
-  return { channelState, scroll };
+  return { channelState, scroll, memberList };
 };
 
 export default useRTMChannel;

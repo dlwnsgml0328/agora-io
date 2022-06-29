@@ -26,6 +26,9 @@ const Header = () => {
         <li>
           <Link to='/RTMCallInvitation'>RTM call invitation 🤙🏼</Link>
         </li>
+        <li>
+          <Link to='/RTMFeatureChannel'>RTM feature channel 🚀</Link>
+        </li>
       </ul>
     </S.Header>
   );
