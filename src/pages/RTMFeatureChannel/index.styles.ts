@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { pallette } from '../../style/pallette';
 
 export const ChannelWrap = styled.div`
   display: flex;
@@ -14,7 +15,7 @@ export const ChannelWrap = styled.div`
     height: 100%;
     padding: 20px;
 
-    background-color: #0066ff;
+    background-color: ${pallette.channel.blue01};
 
     p {
       margin: 0;
@@ -22,7 +23,7 @@ export const ChannelWrap = styled.div`
       line-height: 32px;
 
       span {
-        color: #fff;
+        color: ${pallette.span.white};
       }
     }
 
@@ -114,7 +115,7 @@ export const ChannelWrap = styled.div`
     width: 20%;
     height: 100%;
     padding: 20px;
-    background: #003dcb;
+    background: ${pallette.channel.blue02};
 
     p {
       margin: 0;
@@ -122,7 +123,7 @@ export const ChannelWrap = styled.div`
       justify-content: space-between;
       align-items: center;
       span {
-        color: #fff;
+        color: ${pallette.span.white};
       }
     }
 
@@ -171,8 +172,8 @@ export const ChannelWrap = styled.div`
     width: 20%;
     height: 70vh;
     padding: 20px;
-    background: #6b93ff;
-    color: #000;
+    background: ${pallette.channel.blue03};
+    color: ${pallette.span.dark};
 
     p {
       display: flex;
@@ -275,7 +276,7 @@ export const InvitationModalWrap = styled.div`
       button {
         width: 30%;
         background-color: #004ec7;
-        color: #fff;
+        color: ${pallette.button.white};
         border: none;
         border-radius: 20px;
         padding: 10px 0;
