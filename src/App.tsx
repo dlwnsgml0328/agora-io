@@ -19,6 +19,7 @@ import RTMQuickStart from './pages/RTMQuickStart';
 import RTMPeerToPeer from './pages/RTMPeerToPeer';
 import RTMCallInvitation from './pages/RTMCallInvitation';
 import RTMFeatureChannel from './pages/RTMFeatureChannel';
+import AgoraFlexibleClassroom from './pages/AgoraFlexibleClassroom';
 
 function App() {
   return (
@@ -49,6 +50,9 @@ function App() {
         <Route path='/RTMPeerToPeer' element={<RTMPeerToPeer />} />
         <Route path='/RTMCallInvitation' element={<RTMCallInvitation />} />
         <Route path='/RTMFeatureChannel' element={<RTMFeatureChannel />} />
+
+        {/* Flexible Classroom */}
+        <Route path='/Agora-flexible-classroom' element={<AgoraFlexibleClassroom />} />
 
         <Route path='*' element={<NotFound />} />
       </Routes>

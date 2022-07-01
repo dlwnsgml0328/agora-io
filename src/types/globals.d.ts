@@ -3,3 +3,9 @@ declare namespace NodeJS {
     [key: string]: string;
   }
 }
+
+declare global {
+  interface Window {
+    AgoraEduSDK: any;
+  }
+}

@@ -29,6 +29,9 @@ const Header = () => {
         <li>
           <Link to='/RTMFeatureChannel'>RTM feature channel 🚀</Link>
         </li>
+        <li>
+          <Link to='/Agora-flexible-classroom'>Flexible Classroom 👨🏻‍🏫</Link>
+        </li>
       </ul>
     </S.Header>
   );
