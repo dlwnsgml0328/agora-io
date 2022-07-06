@@ -11,3 +11,10 @@ export const LIVE_CONFIG = {
   CHANNEL: process.env.REACT_APP_LIVE_CHANNEL,
   TOKEN: process.env.REACT_APP_LIVE_TOKEN,
 };
+
+export const CLASS_ROOM_CONFIG = {
+  APP_ID: process.env.REACT_APP_LIVE_ID,
+  TEACHER: process.env.REACT_APP_LIVE_TEACHER,
+  STUDENT1: process.env.REACT_APP_LIVE_STU1,
+  STUDENT2: process.env.REACT_APP_LIVE_STU2,
+};

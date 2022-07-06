@@ -22,7 +22,6 @@ const CreateLocalTracks = () => {
   const join = async () => {
     await client
       .join(APP_ID, CHANNEL, TOKEN)
-      .then((res) => console.log('@ join: ', res))
       .then(() => makeLocal())
       .catch((err) => console.log('@ err in join: ', err));
   };
