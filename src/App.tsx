@@ -20,6 +20,7 @@ import NotFound from './pages/NotFound';
 // import RTMCallInvitation from './pages/RTMCallInvitation';
 // import RTMFeatureChannel from './pages/RTMFeatureChannel';
 import AgoraFlexibleClassroom from './pages/AgoraFlexibleClassroom';
+import ProgressComponent from './pages/ProgressComponent';
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
         <Route path='/RTMFeatureChannel' element={<RTMFeatureChannel />} /> */}
 
         {/* Flexible Classroom */}
+        <Route path='/progress' element={<ProgressComponent />} />
         <Route path='/Agora-flexible-classroom' element={<AgoraFlexibleClassroom />} />
 
         <Route path='*' element={<NotFound />} />

@@ -30,6 +30,9 @@ const Header = () => {
           <Link to='/RTMFeatureChannel'>RTM feature channel 🚀</Link>
         </li> */}
         <li>
+          <Link to='/progress'>Progress state 📶</Link>
+        </li>
+        <li>
           <Link to='/Agora-flexible-classroom'>Flexible Classroom 👨🏻‍🏫</Link>
         </li>
       </ul>

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
+import * as S from './index.styles';
+
 import { CLASS_ROOM_CONFIG } from '../../config';
 
 const { APP_ID, TEACHER, STUDENT1, STUDENT2 } = CLASS_ROOM_CONFIG;
@@ -26,9 +27,10 @@ const USER_STUDENT2 = {
 };
 
 const AgoraFlexibleClassroom = () => {
+  const [rate, setRate] = useState(0);
+  const [downloadDone, setDownloadDone] = useState(false);
   const [isRoom, setIsRoom] = useState(false);
   const [user, setUser] = useState('');
-  const [infoModal, setInfoModal] = useState(true);
 
   const [config, setConfig] = useState({
     uid: '',
@@ -54,7 +56,6 @@ const AgoraFlexibleClassroom = () => {
       alert('Invalid length, must be 4 characters');
       return;
     }
-
     setRoomId(e.target.value);
   }, []);
 
@@ -85,40 +86,76 @@ const AgoraFlexibleClassroom = () => {
         duration: 60 * 60,
         courseWareList: [],
         listener: (evt: any) => {
-          console.log('evt', evt);
+          console.log('@ evt', evt);
         },
       });
     },
     [config, roomId]
   );
 
-  const insertScript = (url: string) => {
-    if (
-      Array.from(document.scripts).some((script) => script.src === window.location.origin + url)
-    ) {
-      setInfoModal(false);
-      return;
-    }
+  const insertScript = useCallback((url: string) => {
+    if (hasScript(url)) return;
+    download();
+    addScript(url);
+  }, []);
 
+  function hasScript(url: string) {
+    return Array.from(document.scripts).some(
+      (script) => script.src === window.location.origin + url
+    );
+  }
+
+  function download() {
+    var xhr = new XMLHttpRequest();
+
+    // 성공
+    xhr.onload = (e) => {
+      console.log('upload complete', e);
+      setDownloadDone(true);
+    };
+    // 다운중
+    xhr.onprogress = (e) => {
+      if (e.lengthComputable) {
+        let percentComplete = Math.floor((e.loaded / e.total) * 100);
+        setRate(percentComplete);
+      } else {
+      }
+    };
+    // 중단
+    xhr.onabort = () => {
+      console.error('Upload cancelled.');
+      setTimeout(() => {
+        window.history.go(0);
+      }, 3000);
+    };
+
+    xhr.open(
+      'GET',
+      'https://eazel-io.s3.ap-northeast-2.amazonaws.com/uploads/immsi/edu_sdk.bundle.js'
+    );
+
+    xhr.send();
+  }
+
+  function addScript(url: string) {
     const script = document.createElement('script');
 
     script.src = url;
     script.async = true;
 
     document.body.appendChild(script);
-    setInfoModal(false);
-  };
+  }
 
   useEffect(() => {
     insertScript(process.env.PUBLIC_URL + '/bundle/edu_sdk.bundle.js');
-  }, []);
+  }, [insertScript]);
 
   return (
     <>
-      {!infoModal ? (
+      {downloadDone ? (
         <>
           {!isRoom ? (
-            <LoginWrap>
+            <S.LoginWrap>
               <form onSubmit={launch}>
                 <div className='input-radio' onChange={setCurrentUser}>
                   <label>
@@ -156,96 +193,29 @@ const AgoraFlexibleClassroom = () => {
                 </div>
 
                 <div className='info'>
-                  처음 방을 만드는 경우, <b>선생님을 선택해서 방을 만들어야</b> 이후 학생으로 입장이
+                  처음 방을 만드는 경우, <b>우선 선생님을 선택해서 방을 만들어야</b> 학생으로 입장이
                   가능합니다.
                 </div>
               </form>
-            </LoginWrap>
+            </S.LoginWrap>
           ) : (
-            <EazelWrap>
+            <S.EazelWrap>
               <iframe className='eazel-iframe' src='https://eazel.net' title='iframe'></iframe>
               <div className='eazel-chat'>
                 <div id='launch-dom'></div>
               </div>
-            </EazelWrap>
+            </S.EazelWrap>
           )}
         </>
       ) : (
-        <div>
+        <S.LoadingWrap>
           <h1>Loading...</h1>
-        </div>
+
+          <progress className='pro' max={100} value={rate} />
+        </S.LoadingWrap>
       )}
     </>
   );
 };
 
 export default AgoraFlexibleClassroom;
-
-const LoginWrap = styled.div`
-  input {
-    vertical-align: middle;
-    margin-right: 5px;
-  }
-
-  .input-radio {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .info {
-    margin-top: 2%;
-  }
-
-  .enter-btn:disabled {
-    background: #7a7a7a;
-    cursor: not-allowed;
-  }
-`;
-
-const EazelWrap = styled.div`
-  display: flex;
-  width: 100%;
-  height: 100%;
-
-  .eazel-iframe {
-    width: 80%;
-  }
-
-  .eazel-chat {
-    width: 20%;
-  }
-
-  #launch-dom {
-    height: 100%;
-  }
-
-  @media screen and (max-width: 480px) {
-    overflow-y: scroll;
-    flex-wrap: wrap;
-
-    .eazel-iframe {
-      display: none;
-    }
-
-    .eazel-chat {
-      width: 100%;
-    }
-
-    #launch-dom {
-      min-height: 1200px;
-
-      .video-player-overlay .video-player {
-        width: 380px !important;
-        height: 200px !important;
-      }
-
-      .chat-panel {
-        height: 80%;
-      }
-      #netless-white {
-        flex-direction: row;
-      }
-    }
-  }
-`;
