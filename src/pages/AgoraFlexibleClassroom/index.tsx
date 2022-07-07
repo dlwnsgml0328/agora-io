@@ -2,8 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { CLASS_ROOM_CONFIG } from '../../config';
 
-const URL = 'https://eazel-io.s3.ap-northeast-2.amazonaws.com/uploads/immsi/edu_sdk.bundle.js';
-
 const { APP_ID, TEACHER, STUDENT1, STUDENT2 } = CLASS_ROOM_CONFIG;
 
 const USER_TEACHER = {
@@ -30,6 +28,7 @@ const USER_STUDENT2 = {
 const AgoraFlexibleClassroom = () => {
   const [isRoom, setIsRoom] = useState(false);
   const [user, setUser] = useState('');
+  const [infoModal, setInfoModal] = useState(true);
 
   const [config, setConfig] = useState({
     uid: '',
@@ -38,10 +37,6 @@ const AgoraFlexibleClassroom = () => {
     roleType: -999,
   });
   const [roomId, setRoomId] = useState('');
-
-  useEffect(() => {
-    console.log('@ config changed!:', config);
-  }, [config]);
 
   const setCurrentUser = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser(e.target.value);
@@ -97,16 +92,13 @@ const AgoraFlexibleClassroom = () => {
     [config, roomId]
   );
 
-  window.addEventListener('unload', () => removeScript(URL));
-
-  const removeScript = (url: string) => {
-    if (Array.from(document.scripts).some((script) => script.src !== url)) return;
-
-    Array.from(document.scripts).filter((script) => script.src !== url);
-  };
-
   const insertScript = (url: string) => {
-    if (Array.from(document.scripts).some((script) => script.src === url)) return;
+    if (
+      Array.from(document.scripts).some((script) => script.src === window.location.origin + url)
+    ) {
+      setInfoModal(false);
+      return;
+    }
 
     const script = document.createElement('script');
 
@@ -114,64 +106,73 @@ const AgoraFlexibleClassroom = () => {
     script.async = true;
 
     document.body.appendChild(script);
+    setInfoModal(false);
   };
 
   useEffect(() => {
-    insertScript(URL);
+    insertScript(process.env.PUBLIC_URL + '/bundle/edu_sdk.bundle.js');
   }, []);
 
   return (
     <>
-      {!isRoom ? (
-        <LoginWrap>
-          <form onSubmit={launch}>
-            <div className='input-radio' onChange={setCurrentUser}>
-              <label>
-                <input type='radio' name='user' value='A' />
-                <span>A (선생님)</span>
-              </label>
-              <label>
-                <input type='radio' name='user' value='B' />
-                <span>B (학생 1)</span>
-              </label>
-              <label>
-                <input type='radio' name='user' value='C' />
-                <span>C (학생 2)</span>
-              </label>
-            </div>
-            <div>
-              <input
-                type='number'
-                style={{
-                  border: '1px solid #000',
-                  padding: '2px 8px',
-                }}
-                placeholder='Please enter your room id (0328)'
-                onChange={onChangeRoom}
-              />
+      {!infoModal ? (
+        <>
+          {!isRoom ? (
+            <LoginWrap>
+              <form onSubmit={launch}>
+                <div className='input-radio' onChange={setCurrentUser}>
+                  <label>
+                    <input type='radio' name='user' value='A' />
+                    <span>A (선생님)</span>
+                  </label>
+                  <label>
+                    <input type='radio' name='user' value='B' />
+                    <span>B (학생 1)</span>
+                  </label>
+                  <label>
+                    <input type='radio' name='user' value='C' />
+                    <span>C (학생 2)</span>
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type='number'
+                    style={{
+                      border: '1px solid #000',
+                      padding: '2px 8px',
+                    }}
+                    placeholder='Please enter your room id (0328)'
+                    onChange={onChangeRoom}
+                  />
 
-              <button
-                className='enter-btn'
-                disabled={user.length === 0 || roomId.length === 0}
-                type='submit'
-                style={{ border: '1px solid #000', padding: '2px 8px' }}
-              >
-                enter
-              </button>
-            </div>
+                  <button
+                    className='enter-btn'
+                    disabled={user.length === 0 || roomId.length === 0}
+                    type='submit'
+                    style={{ border: '1px solid #000', padding: '2px 8px' }}
+                  >
+                    enter
+                  </button>
+                </div>
 
-            <div className='info'>
-              처음 방을 만드는 경우, <b>선생님을 선택해서 방을 만들어야</b> 이후 학생으로 입장이
-              가능합니다.
-            </div>
-          </form>
-        </LoginWrap>
+                <div className='info'>
+                  처음 방을 만드는 경우, <b>선생님을 선택해서 방을 만들어야</b> 이후 학생으로 입장이
+                  가능합니다.
+                </div>
+              </form>
+            </LoginWrap>
+          ) : (
+            <EazelWrap>
+              <iframe className='eazel-iframe' src='https://eazel.net' title='iframe'></iframe>
+              <div className='eazel-chat'>
+                <div id='launch-dom'></div>
+              </div>
+            </EazelWrap>
+          )}
+        </>
       ) : (
-        <div style={{ width: '100%', height: '100%' }}>
-          <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            <iframe src='https://eazel.net' title='iframe' width='80%'></iframe>
-            <div id='launch-dom' style={{ width: '20%', height: '100%' }}></div>
-          </div>
+        <div>
+          <h1>Loading...</h1>
         </div>
       )}
     </>
@@ -199,5 +200,52 @@ const LoginWrap = styled.div`
   .enter-btn:disabled {
     background: #7a7a7a;
     cursor: not-allowed;
+  }
+`;
+
+const EazelWrap = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+
+  .eazel-iframe {
+    width: 80%;
+  }
+
+  .eazel-chat {
+    width: 20%;
+  }
+
+  #launch-dom {
+    height: 100%;
+  }
+
+  @media screen and (max-width: 480px) {
+    overflow-y: scroll;
+    flex-wrap: wrap;
+
+    .eazel-iframe {
+      display: none;
+    }
+
+    .eazel-chat {
+      width: 100%;
+    }
+
+    #launch-dom {
+      min-height: 1200px;
+
+      .video-player-overlay .video-player {
+        width: 380px !important;
+        height: 200px !important;
+      }
+
+      .chat-panel {
+        height: 80%;
+      }
+      #netless-white {
+        flex-direction: row;
+      }
+    }
   }
 `;
