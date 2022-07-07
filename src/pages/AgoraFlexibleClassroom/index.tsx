@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import * as S from './index.styles';
 
 import { CLASS_ROOM_CONFIG } from '../../config';
+import { AgoraEduClassroomEvent } from '../../types/agora';
 
 const { APP_ID, TEACHER, STUDENT1, STUDENT2 } = CLASS_ROOM_CONFIG;
 
@@ -85,13 +86,32 @@ const AgoraFlexibleClassroom = () => {
         startTime: new Date().getTime(),
         duration: 60 * 60,
         courseWareList: [],
-        listener: (evt: any) => {
-          console.log('@ evt', evt);
+        listener: (evt: AgoraEduClassroomEvent) => {
+          catchEvent(evt);
         },
       });
     },
     [config, roomId]
   );
+
+  const catchEvent = (evt: AgoraEduClassroomEvent) => {
+    console.log('🔥 event come in!', evt);
+    switch (evt) {
+      case AgoraEduClassroomEvent.Ready:
+        console.log('🔥 ready!', evt);
+        break;
+      case AgoraEduClassroomEvent.Destroyed:
+        console.log('🔥 destroyed!', evt);
+        const yes = window.confirm(`press 'yes' if you want to refresh or exit the app!`);
+        if (yes) window.history.go(0);
+        break;
+      case AgoraEduClassroomEvent.RTCStateChanged:
+        console.log('🔥 RTC state changed!', evt);
+        break;
+      default:
+        break;
+    }
+  };
 
   const insertScript = useCallback((url: string) => {
     if (hasScript(url)) return;
