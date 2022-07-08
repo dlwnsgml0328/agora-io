@@ -129,12 +129,12 @@ const AgoraFlexibleClassroom = () => {
     var xhr = new XMLHttpRequest();
 
     // 성공
-    xhr.onload = (e) => {
+    xhr.onload = (e: ProgressEvent<EventTarget>) => {
       console.log('upload complete', e);
       setDownloadDone(true);
     };
     // 다운중
-    xhr.onprogress = (e) => {
+    xhr.onprogress = (e: ProgressEvent<EventTarget>) => {
       if (e.lengthComputable) {
         let percentComplete = Math.floor((e.loaded / e.total) * 100);
         setRate(percentComplete);
@@ -142,19 +142,22 @@ const AgoraFlexibleClassroom = () => {
       }
     };
     // 중단
-    xhr.onabort = () => {
+    xhr.onabort = (e: ProgressEvent<EventTarget>) => {
       console.error('Upload cancelled.');
       setTimeout(() => {
         window.history.go(0);
       }, 3000);
     };
 
-    xhr.open(
-      'GET',
-      'https://eazel-io.s3.ap-northeast-2.amazonaws.com/uploads/immsi/edu_sdk.bundle.js'
-    );
+    function openAndSend(xhr: XMLHttpRequest) {
+      xhr.open(
+        'GET',
+        'https://eazel-io.s3.ap-northeast-2.amazonaws.com/uploads/immsi/edu_sdk.bundle.js'
+      );
 
-    xhr.send();
+      xhr.send();
+    }
+    openAndSend(xhr);
   }
 
   function addScript(url: string) {
