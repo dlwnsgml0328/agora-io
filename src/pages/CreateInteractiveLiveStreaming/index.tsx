@@ -6,6 +6,10 @@ import { LIVE_CONFIG } from '../../config';
 import useAgoraLive from '../../hooks/useAgoraLive';
 
 // mode rtc <-> live
+
+/**
+ * 라이브 스트리밍 서비스를 사용하고 있음 토큰은 LIVE TOKEN
+ */
 const client = AgoraRTC.createClient({ codec: 'h264', mode: 'live' });
 
 const CreateInteractiveLiveStreaming = () => {

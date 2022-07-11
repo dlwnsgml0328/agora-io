@@ -8,15 +8,15 @@ const Header = () => {
         <li>
           <Link to='/'>Home</Link>
         </li>
-        {/*<li>
+        {/* REACT_APP_APP_ID */}
+        <li>
           <Link to='/CreateRemoteTracks-v2'>Create Remote Tracks V2 🔥</Link>
         </li>
+        {/* REACT_APP_LIVE_ID */}
         <li>
           <Link to='/create-interactive-live-streaming'>Create Interactive live streaming 🖥</Link>
         </li>
-        <li>
-          <Link to='/RTCQuickStart'>RTC quick start 🔥</Link>
-        </li>
+        {/* REACT_APP_RTM_ID */}
         <li>
           <Link to='/RTMQuickStart'>RTM quick start (channel) 🔥</Link>
         </li>
@@ -28,7 +28,8 @@ const Header = () => {
         </li>
         <li>
           <Link to='/RTMFeatureChannel'>RTM feature channel 🚀</Link>
-        </li> */}
+        </li>
+        {/* REACT_APP_LIVE_ID/TEACHER/STU1/STU2 */}
         <li>
           <Link to='/progress'>Progress state 📶</Link>
         </li>

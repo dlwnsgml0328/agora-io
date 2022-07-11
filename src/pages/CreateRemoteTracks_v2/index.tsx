@@ -7,6 +7,10 @@ import useAgora from '../../hooks/useAgora';
 
 const client = AgoraRTC.createClient({ codec: 'h264', mode: 'rtc' });
 
+/**
+ * 토큰을 바탕으로 비디오 및 오디오를 제공하는 컴포넌트
+ */
+
 const CreateRemoteTracksV2 = () => {
   const [id, setId] = useState('');
 

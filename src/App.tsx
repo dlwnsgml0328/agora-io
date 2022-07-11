@@ -10,17 +10,16 @@ import Home from './pages/home';
 // import PublishAndSubscribe from './pages/PublishAndSubscribe';
 // import AdjustVolume from './pages/AdjustVolume';
 
-import NotFound from './pages/NotFound';
-// import CreateRemoteTracksV2 from './pages/CreateRemoteTracks_v2';
-// import CreateInteractiveLiveStreaming from './pages/CreateInteractiveLiveStreaming';
-// import AgoraReactUIKit from './pages/AgoraReactUIKit';
-// import RTCQuickStart from './pages/RTCQuickStart';
-// import RTMQuickStart from './pages/RTMQuickStart';
-// import RTMPeerToPeer from './pages/RTMPeerToPeer';
-// import RTMCallInvitation from './pages/RTMCallInvitation';
-// import RTMFeatureChannel from './pages/RTMFeatureChannel';
+import CreateRemoteTracksV2 from './pages/CreateRemoteTracks_v2';
+import CreateInteractiveLiveStreaming from './pages/CreateInteractiveLiveStreaming';
+import RTMQuickStart from './pages/RTMQuickStart';
+import RTMPeerToPeer from './pages/RTMPeerToPeer';
+import RTMCallInvitation from './pages/RTMCallInvitation';
+import RTMFeatureChannel from './pages/RTMFeatureChannel';
 import AgoraFlexibleClassroom from './pages/AgoraFlexibleClassroom';
 import ProgressComponent from './pages/ProgressComponent';
+
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -30,27 +29,25 @@ function App() {
 
       <Routes>
         <Route path='/' element={<Home />} />
-        {/* <Route path='/JoinAndLeave' element={<JoinAndLeave />} />
-        <Route path='/CreateLocalTracks' element={<CreateLocalTracks />} />
-        <Route path='/CreateRemoteTracks' element={<CreateRemoteTracks />} />
+        {/* <Route path='/JoinAndLeave' element={<JoinAndLeave />} /> */}
+        {/* <Route path='/CreateLocalTracks' element={<CreateLocalTracks />} /> */}
+        {/* <Route path='/CreateRemoteTracks' element={<CreateRemoteTracks />} /> */}
+        {/* <Route path='/PublishAndSubscribe' element={<PublishAndSubscribe />} /> */}
+        {/* <Route path='/AdjustVolume' element={<AdjustVolume />} /> */}
         <Route path='/CreateRemoteTracks-v2' element={<CreateRemoteTracksV2 />} />
-        <Route path='/PublishAndSubscribe' element={<PublishAndSubscribe />} />
-        <Route path='/AdjustVolume' element={<AdjustVolume />} /> */}
 
         {/* Interactive Live Stream*/}
-        {/* <Route
+        <Route
           path='/create-interactive-live-streaming'
           element={<CreateInteractiveLiveStreaming />}
-        /> */}
+        />
 
         {/* UI Kit (useless) */}
-        {/* <Route path='/Agora-react-ui-ki' element={<AgoraReactUIKit />} />
 
-        <Route path='/RTCQuickStart' element={<RTCQuickStart />} />
         <Route path='/RTMQuickStart' element={<RTMQuickStart />} />
         <Route path='/RTMPeerToPeer' element={<RTMPeerToPeer />} />
         <Route path='/RTMCallInvitation' element={<RTMCallInvitation />} />
-        <Route path='/RTMFeatureChannel' element={<RTMFeatureChannel />} /> */}
+        <Route path='/RTMFeatureChannel' element={<RTMFeatureChannel />} />
 
         {/* Flexible Classroom */}
         <Route path='/progress' element={<ProgressComponent />} />
