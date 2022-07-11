@@ -34,7 +34,7 @@ export interface IresultUserList {
   canInvite: boolean;
 }
 
-const RTMFeatureChannel = () => {
+const RTMIntegration = () => {
   const [auth, setAuth] = useState(false);
   const [user, setUser] = useState('');
   const [config, setConfig] = useState({ uid: '', token: '' });
@@ -394,4 +394,4 @@ const RTMFeatureChannel = () => {
   );
 };
 
-export default RTMFeatureChannel;
+export default RTMIntegration;

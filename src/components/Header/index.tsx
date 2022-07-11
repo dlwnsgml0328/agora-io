@@ -10,24 +10,24 @@ const Header = () => {
         </li>
         {/* REACT_APP_APP_ID */}
         <li>
-          <Link to='/CreateRemoteTracks-v2'>Create Remote Tracks V2 🔥</Link>
+          <Link to='/rtc-trac'>RTC Track 🔥</Link>
         </li>
         {/* REACT_APP_LIVE_ID */}
         <li>
-          <Link to='/create-interactive-live-streaming'>Create Interactive live streaming 🖥</Link>
+          <Link to='/interactive-live-streaming'>Interactive live streaming 🖥</Link>
         </li>
         {/* REACT_APP_RTM_ID */}
         <li>
-          <Link to='/RTMQuickStart'>RTM quick start (channel) 🔥</Link>
+          <Link to='/rtm-channel'>RTM Channel 🔥</Link>
         </li>
         <li>
-          <Link to='/RTMPeerToPeer'>RTM peer to peer (1:1) 🔥</Link>
+          <Link to='/rtm-peer-to-peer'>RTM peer to peer (1:1) 🔥</Link>
         </li>
         <li>
-          <Link to='/RTMCallInvitation'>RTM call invitation 🤙🏼</Link>
+          <Link to='/rtm-call-invitation'>RTM call invitation 🤙🏼</Link>
         </li>
         <li>
-          <Link to='/RTMFeatureChannel'>RTM feature channel 🚀</Link>
+          <Link to='/rtm-integration'>RTM integration channel 🚀</Link>
         </li>
         {/* REACT_APP_LIVE_ID/TEACHER/STU1/STU2 */}
         <li>

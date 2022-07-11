@@ -33,23 +33,26 @@ REACT_APP_USER_B=
 REACT_APP_USER_C=
 ```
 
-1. REACT_APP_APP_ID
-    - RTC (Real Time Communication)
-    - stage: Testing
+### 1. REACT_APP_APP_ID
 
-2. REACT_APP_LIVE_ID
-    - Interactive Live Streaming
-    - stge: Live
+- RTC (Real Time Communication)
+- stage: Testing
 
-    - REACT_APP_LIVE_TEACHER : teacher
-    - REACT_APP_LIVE_STU1 : stu1
-    - REACT_APP_LIVE_STU2 : stu2
+### 2. REACT_APP_LIVE_ID
+
+- Interactive Live Streaming
+- stage: Live
+
+- REACT_APP_LIVE_TEACHER : teacher
+- REACT_APP_LIVE_STU1 : stu1
+- REACT_APP_LIVE_STU2 : stu2
 
 
-3. REACT_APP_RTM_ID
-    - RTM (Real Time Messaging)
-    - stge: Live
-    
-    - REACT_APP_USER_A : 0328
-    - REACT_APP_USER_B : 1796
-    - REACT_APP_USER_C : 9170
+### 3. REACT_APP_RTM_ID
+
+- RTM (Real Time Messaging)
+- stage: Live
+
+- REACT_APP_USER_A : 0328
+- REACT_APP_USER_B : 1796
+- REACT_APP_USER_C : 9170

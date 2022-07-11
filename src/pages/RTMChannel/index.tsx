@@ -24,7 +24,7 @@ const USER_C = {
   token: process.env.REACT_APP_USER_C,
 };
 
-const RTMQuickStart = () => {
+const RTMChannel = () => {
   const [auth, setAuth] = useState(false);
   const [user, setUser] = useState('');
   const [config, setConfig] = useState({ uid: '', token: '' });
@@ -205,4 +205,4 @@ const RTMQuickStart = () => {
   );
 };
 
-export default RTMQuickStart;
+export default RTMChannel;

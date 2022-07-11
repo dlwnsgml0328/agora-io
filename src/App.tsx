@@ -9,15 +9,16 @@ import Home from './pages/home';
 // import CreateRemoteTracks from './pages/CreateRemoteTracks';
 // import PublishAndSubscribe from './pages/PublishAndSubscribe';
 // import AdjustVolume from './pages/AdjustVolume';
+import RTCTrack from './pages/RTCTrack';
 
-import CreateRemoteTracksV2 from './pages/CreateRemoteTracks_v2';
-import CreateInteractiveLiveStreaming from './pages/CreateInteractiveLiveStreaming';
-import RTMQuickStart from './pages/RTMQuickStart';
+import InteractiveLiveStreaming from './pages/InteractiveLiveStreaming';
+import RTMChannel from './pages/RTMChannel';
 import RTMPeerToPeer from './pages/RTMPeerToPeer';
 import RTMCallInvitation from './pages/RTMCallInvitation';
-import RTMFeatureChannel from './pages/RTMFeatureChannel';
-import AgoraFlexibleClassroom from './pages/AgoraFlexibleClassroom';
+import RTMIntegration from './pages/RTMIntegration';
+
 import ProgressComponent from './pages/ProgressComponent';
+import AgoraFlexibleClassroom from './pages/AgoraFlexibleClassroom';
 
 import NotFound from './pages/NotFound';
 
@@ -29,25 +30,22 @@ function App() {
 
       <Routes>
         <Route path='/' element={<Home />} />
+        {/* RTC */}
         {/* <Route path='/JoinAndLeave' element={<JoinAndLeave />} /> */}
         {/* <Route path='/CreateLocalTracks' element={<CreateLocalTracks />} /> */}
         {/* <Route path='/CreateRemoteTracks' element={<CreateRemoteTracks />} /> */}
         {/* <Route path='/PublishAndSubscribe' element={<PublishAndSubscribe />} /> */}
         {/* <Route path='/AdjustVolume' element={<AdjustVolume />} /> */}
-        <Route path='/CreateRemoteTracks-v2' element={<CreateRemoteTracksV2 />} />
+        <Route path='/rtc-track' element={<RTCTrack />} />
 
         {/* Interactive Live Stream*/}
-        <Route
-          path='/create-interactive-live-streaming'
-          element={<CreateInteractiveLiveStreaming />}
-        />
+        <Route path='/interactive-live-streaming' element={<InteractiveLiveStreaming />} />
 
-        {/* UI Kit (useless) */}
-
-        <Route path='/RTMQuickStart' element={<RTMQuickStart />} />
-        <Route path='/RTMPeerToPeer' element={<RTMPeerToPeer />} />
-        <Route path='/RTMCallInvitation' element={<RTMCallInvitation />} />
-        <Route path='/RTMFeatureChannel' element={<RTMFeatureChannel />} />
+        {/* RTM */}
+        <Route path='/rtm-channel' element={<RTMChannel />} />
+        <Route path='/rtm-peer-to-peer' element={<RTMPeerToPeer />} />
+        <Route path='/rtm-call-invitation' element={<RTMCallInvitation />} />
+        <Route path='/rtm-integration' element={<RTMIntegration />} />
 
         {/* Flexible Classroom */}
         <Route path='/progress' element={<ProgressComponent />} />

@@ -11,7 +11,7 @@ const client = AgoraRTC.createClient({ codec: 'h264', mode: 'rtc' });
  * 토큰을 바탕으로 비디오 및 오디오를 제공하는 컴포넌트
  */
 
-const CreateRemoteTracksV2 = () => {
+const RTCTrack = () => {
   const [id, setId] = useState('');
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -52,7 +52,7 @@ const CreateRemoteTracksV2 = () => {
 
   return (
     <div>
-      <h3>CreateRemoteTracksV2</h3>
+      <h3>RTCTrack</h3>
 
       {!joinState ? (
         <>
@@ -96,4 +96,4 @@ const CreateRemoteTracksV2 = () => {
   );
 };
 
-export default CreateRemoteTracksV2;
+export default RTCTrack;

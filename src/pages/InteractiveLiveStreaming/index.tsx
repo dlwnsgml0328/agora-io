@@ -12,7 +12,7 @@ import useAgoraLive from '../../hooks/useAgoraLive';
  */
 const client = AgoraRTC.createClient({ codec: 'h264', mode: 'live' });
 
-const CreateInteractiveLiveStreaming = () => {
+const InteractiveLiveStreaming = () => {
   const [id, setId] = useState('');
   const [role, setRole] = useState('');
 
@@ -144,7 +144,7 @@ const CreateInteractiveLiveStreaming = () => {
   );
 };
 
-export default CreateInteractiveLiveStreaming;
+export default InteractiveLiveStreaming;
 
 /**   
   type FoobarBaz = ClientRole | 'Backstage';

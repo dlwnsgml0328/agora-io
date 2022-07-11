@@ -1,4 +1,4 @@
-import { IresultUserList } from '../../../pages/RTMFeatureChannel';
+import { IresultUserList } from '../../../pages/RTMIntegration';
 
 interface IUserListInviteModal {
   exitModal: () => void;
